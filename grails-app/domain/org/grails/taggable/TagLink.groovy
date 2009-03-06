@@ -26,10 +26,10 @@ class TagLink {
 
 	Tag tag
 	Long tagRef
-	String tagClass
+	String type
 	
 	static constraints = {
-		tagClass blank:false
+		type blank:false
 		tagRef min:0L
 	}
 

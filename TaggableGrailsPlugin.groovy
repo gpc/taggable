@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 import org.grails.taggable.*
+import grails.util.*
 
 /**
  * A plugin that adds a generic mechanism for tagging data 
@@ -21,11 +22,11 @@ import org.grails.taggable.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.1"
+    def version = "0.2"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
-    def dependsOn = [hibernate:"1.1 > *"]
+    def dependsOn = [hibernate:"1.1 > *", richui:"0.2 > *"]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
             "grails-app/views/error.gsp",
@@ -56,12 +57,12 @@ A plugin that adds a generic mechanism for tagging data
 						def link = criteria.get {
 							eq 'tag', tag
 							eq 'tagRef', instance.id
-							eq 'tagClass', instance.class.name
+							eq 'type', GrailsNameUtils.getPropertyName(instance.class)
 							cache true
 						}
 						
 						if(!link) {
-							link = new TagLink(tag:tag, tagRef:delegate.id, tagClass:delegate.class.name).save()
+							link = new TagLink(tag:tag, tagRef:delegate.id, type:GrailsNameUtils.getPropertyName(delegate.class)).save()
 						}
 						return delegate // for method chaining
 					}
@@ -84,7 +85,7 @@ A plugin that adds a generic mechanism for tagging data
 								eq 'name', name
 							}
 							eq 'tagRef', instance.id
-							eq 'tagClass', instance.class.name
+							eq 'type', GrailsNameUtils.getPropertyName(instance.class)
 							cache true
 						}						
 						link?.delete()
@@ -138,7 +139,7 @@ A plugin that adds a generic mechanism for tagging data
     }
 
 	private getTagLinks(obj) {
-		TagLink.findAllByTagRefAndTagClass(obj.id, obj.class.name, [cache:true])		
+		TagLink.findAllByTagRefAndType(obj.id, GrailsNameUtils.getPropertyName(obj.class), [cache:true])		
 	}
 	
 	static getTagReferences(String tagName, String className) {
@@ -150,7 +151,7 @@ A plugin that adds a generic mechanism for tagging data
 				tag {
 					eq 'name', tagName							
 				}				
-				eq 'tagClass', className
+				eq 'type', GrailsNameUtils.getPropertyName(className)
 				cache true
 			}
 			

@@ -18,7 +18,7 @@ class TaggableTests extends GrailsUnitTestCase {
 		td.addTag("groovy")
 		  .addTag("grails")
 		
-		def links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )
@@ -30,7 +30,7 @@ class TaggableTests extends GrailsUnitTestCase {
 		
 		td.addTags(["groovy","grails"])
 		
-		def links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )
@@ -43,14 +43,14 @@ class TaggableTests extends GrailsUnitTestCase {
 		td.addTag("groovy")
 		  .addTag("grails")
 		
-		def links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )
 		
 		td.removeTag("groovy")
 		
-		links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		assertEquals 1, links.size()
 		assertEquals( ['grails'], links.tag.name )
 		
@@ -79,7 +79,7 @@ class TaggableTests extends GrailsUnitTestCase {
 		
 		td.tags = ["groovy", "grails"]
 		
-		def links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )	
@@ -87,7 +87,7 @@ class TaggableTests extends GrailsUnitTestCase {
 		
 		td.tags = ["foo", "bar"]			
 		
-		links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		assertEquals 2, links.size()
 		assertEquals( ['foo', 'bar'], links.tag.name )	
 		assertEquals( ['foo', 'bar'], td.tags )			

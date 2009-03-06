@@ -23,6 +23,18 @@ class TaggableTests extends GrailsUnitTestCase {
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )
     }
+    
+    void testAddTagsMethod() {
+		def td = new TestDomain(name:"foo")
+		td.save()
+		
+		td.addTags(["groovy","grails"])
+		
+		def links = TagLink.findAllWhere(tagRef:td.id, tagClass:td.class.name)
+		
+		assertEquals 2, links.size()
+		assertEquals( ['groovy', 'grails'], links.tag.name )
+    }
 
 	void testRemoveTagMethod() {
 		def td = new TestDomain(name:"foo")

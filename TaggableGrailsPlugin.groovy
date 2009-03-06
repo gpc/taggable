@@ -66,6 +66,10 @@ A plugin that adds a generic mechanism for tagging data
 						return delegate // for method chaining
 					}
 					
+					addTags { names ->
+					    names.each { delegate.addTag it }
+					}
+					
 					getTags {->
 						delegate.id ? getTagLinks(delegate).tag.name : []
 					}

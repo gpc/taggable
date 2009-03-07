@@ -1,4 +1,4 @@
-<plugin name='taggable' version='0.2' grailsVersion='1.1 &gt; *'>
+<plugin name='taggable' version='0.3' grailsVersion='1.1 &gt; *'>
   <author>Graeme Rocher</author>
   <authorEmail>graeme.rocher@springsource.com</authorEmail>
   <title>Taggable Plugin</title>
@@ -7,7 +7,6 @@ A plugin that adds a generic mechanism for tagging data
 </description>
   <documentation>http://grails.org/Taggable+Plugin</documentation>
   <resources>
-    <resource>DataSource</resource>
     <resource>org.grails.taggable.Tag</resource>
     <resource>org.grails.taggable.TagLink</resource>
     <resource>org.grails.taggable.TestDomain</resource>
@@ -16,6 +15,5 @@ A plugin that adds a generic mechanism for tagging data
   </resources>
   <dependencies>
     <plugin name='hibernate' version='1.1 &gt; *' />
-    <plugin name='richui' version='0.2 &gt; *' />
   </dependencies>
 </plugin>

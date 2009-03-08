@@ -139,4 +139,41 @@ class TaggableTests extends GrailsUnitTestCase {
 		assertEquals 0, TestDomain.countByTag(null)				
 		
 	}
+	
+	void testAllTags() {
+		new TestDomain(name:"foo")
+		   .save()		
+		  .addTag("groovy")
+		  .addTag("grails")
+		  .addTag("griffon")		
+		new TestDomain(name:"bar")
+		   .save()		
+		  .addTag("groovy")
+		  .addTag("grails")
+
+
+		assertEquals( ['grails','griffon','groovy'], TestDomain.allTags )
+		assertEquals 3, TestDomain.totalTags
+	}
+	
+	void testParseTags() {
+		def td = new TestDomain(name:"foo")
+		   			.save()
+		
+		td.parseTags("groovy,grails,griffon")
+
+		assertEquals( ['grails','griffon','groovy'], TestDomain.allTags )				
+	}
+	
+	void testParseTagsWithDelimiter() {
+		def td = new TestDomain(name:"foo")
+		   			.save()
+		
+		td.parseTags("groovy grails griffon", " ")
+
+		assertEquals( ['grails','griffon','groovy'], TestDomain.allTags )				
+		
+	}
+	
+
 }

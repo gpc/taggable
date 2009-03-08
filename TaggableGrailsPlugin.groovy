@@ -22,7 +22,7 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.3"
+    def version = "0.4"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
@@ -73,8 +73,10 @@ A plugin that adds a generic mechanism for tagging data
 					
 					getTags {->
 						delegate.id ? getTagLinks(delegate).tag.name : []
+					}					
+					parseTags { String tags, String delimiter = "," ->
+						tags.split(delimiter).each { addTag(it) }
 					}
-					
 					removeTag { String name ->
 						if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
 						
@@ -101,6 +103,22 @@ A plugin that adds a generic mechanism for tagging data
 					
 					'static' {
 						
+						getAllTags {->
+							def clazz = delegate
+							TagLink.withCriteria {
+								projections { tag { distinct "name" } }
+								eq 'type', GrailsNameUtils.getPropertyName(clazz.name)
+								cache true
+							}
+						}
+						getTotalTags = {->
+							def clazz = delegate
+							TagLink.createCriteria().get {
+								projections { tag { countDistinct "name" } }
+								eq 'type', GrailsNameUtils.getPropertyName(clazz.name)
+								cache true
+							}							
+						}
 						countByTag { String tag ->
 							def identifiers = TaggableGrailsPlugin.getTagReferences(tag, delegate.name)
 							if(identifiers) {

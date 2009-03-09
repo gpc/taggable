@@ -22,7 +22,7 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.4"
+    def version = "0.4.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
@@ -75,7 +75,11 @@ A plugin that adds a generic mechanism for tagging data
 						delegate.id ? getTagLinks(delegate).tag.name : []
 					}					
 					parseTags { String tags, String delimiter = "," ->
-						tags.split(delimiter).each { addTag(it) }
+						tags.split(delimiter).each { 
+							def tag = it.trim()
+							if(tag) addTag(tag) 
+						}
+						return delegate
 					}
 					removeTag { String name ->
 						if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
@@ -97,7 +101,7 @@ A plugin that adds a generic mechanism for tagging data
 					setTags { List tags ->
 						getTagLinks(delegate)*.delete()
 						for(tag in tags) {
-							addTag(tag?.toString())
+							if(tag) addTag(tag?.toString())
 						}
 					}
 					

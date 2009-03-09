@@ -22,7 +22,7 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.4.1"
+    def version = "0.4.2"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
@@ -140,13 +140,20 @@ A plugin that adds a generic mechanism for tagging data
 							}
 						}
 						
-						findAllByTag { String name ->
+						findAllByTag { String name->
 							def identifiers = TaggableGrailsPlugin.getTagReferences(name, delegate.name)
 							if(identifiers) {
-								withCriteria {
-									inList 'id', identifiers
-									cache true
-								}
+								delegate.findAllByIdInList(identifiers, [cache:true])
+							}
+							else {
+								return Collections.EMPTY_LIST								
+							}
+						}
+						findAllByTag { String name, Map args->
+							def identifiers = TaggableGrailsPlugin.getTagReferences(name, delegate.name)
+							if(identifiers) {
+								args.cache=true
+								delegate.findAllByIdInList(identifiers, args)
 							}
 							else {
 								return Collections.EMPTY_LIST								

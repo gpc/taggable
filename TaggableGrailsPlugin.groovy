@@ -22,7 +22,7 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.4.2"
+    def version = "0.5"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
@@ -99,7 +99,7 @@ A plugin that adds a generic mechanism for tagging data
 					}
 										
 					setTags { List tags ->
-						getTagLinks(delegate)*.delete()
+						getTagLinks(delegate)*.delete(flush:true)
 						for(tag in tags) {
 							if(tag) addTag(tag?.toString())
 						}
@@ -159,7 +159,41 @@ A plugin that adds a generic mechanism for tagging data
 								return Collections.EMPTY_LIST								
 							}
 						}
-						
+                        findAllByTagWithCriteria { String name, Closure crit ->
+                            def clazz = delegate
+                            def identifiers = TaggableGrailsPlugin.getTagReferences(name, clazz.name)
+                            if(identifiers) {
+                                args.cache=true
+                                return clazz.withCriteria {
+                                    'in'('id', identifiers)
+
+                                    crit.delegate = delegate
+                                    crit.call()
+                                }
+                            }
+                            else {
+                                return Collections.EMPTY_LIST                                                           
+                            }
+                        }
+                        findAllTagsWithCriteria { Map params, Closure criteria ->
+                            def clazz = delegate
+							TagLink.withCriteria {
+								projections { tag { distinct "name" } }
+								eq 'type', GrailsNameUtils.getPropertyName(clazz.name)
+								cache true
+                                tag(criteria)
+
+                                if (params.offset != null) {
+                                    firstResult(params.offset.toInteger())
+                                }
+                                if (params.max != null) {
+                                    maxResults(params.max.toInteger())
+                                }
+                                tag {
+                                    order('name', 'asc')
+                                }
+							}
+                        }
 
 					}
 				}

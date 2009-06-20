@@ -97,12 +97,25 @@ A plugin that adds a generic mechanism for tagging data
 						link?.delete()
 						return delegate
 					}
-										
 					setTags { List tags ->
-						getTagLinks(delegate)*.delete(flush:true)
-						for(tag in tags) {
-							if(tag) addTag(tag?.toString())
-						}
+                        // remove invalid tags
+                        tags =  tags?.findAll { it }
+
+                        if (tags) {
+                            // remove old tags that not appear in the new tags
+                            getTagLinks(delegate)*.each { TagLink tagLink ->
+                                if (tags.contains(tagLink.tag.name)) {
+                                    tags.remove(tagLink.tag.name)
+                                } else {
+                                    tagLink.delete()
+                                }
+                            }
+
+                            // add the rest
+                            addTags(tags)
+                        } else {
+                            getTagLinks(delegate)*.delete()
+                        }
 					}
 					
 					'static' {

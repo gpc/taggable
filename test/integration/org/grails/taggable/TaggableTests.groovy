@@ -72,12 +72,12 @@ class TaggableTests extends GrailsUnitTestCase {
 		
      	assertEquals( ['groovy', 'grails'], td.tags )
 	}
-	
+	    
 	void testSetTagsMethod() {
 		def td = new TestDomain(name:"foo")
 		td.save()
 		
-		td.tags = ["groovy", "grails"]
+		td.tags = ["groovy", null, "grails", '']
 		
 		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
@@ -92,6 +92,12 @@ class TaggableTests extends GrailsUnitTestCase {
 		assertEquals( ['foo', 'bar'], links.tag.name )	
 		assertEquals( ['foo', 'bar'], td.tags )			
 		
+		td.tags = []			
+		
+		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
+		assertEquals 0, links.size()
+		assertEquals( [], links.tag.name )	
+		assertEquals( [], td.tags )					
 	}
 	
 	void testFindAllByTag() {

@@ -22,7 +22,7 @@ import org.codehaus.groovy.grails.commons.*
  * 
  * @author Graeme Rocher
  */
-class TagLink {
+class TagLink implements Serializable {
 
 	Tag tag
 	Long tagRef

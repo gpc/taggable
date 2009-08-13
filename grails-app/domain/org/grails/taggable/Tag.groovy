@@ -21,7 +21,7 @@ import org.codehaus.groovy.grails.commons.*
  * 
  * @author Graeme Rocher
  */
-class Tag {
+class Tag implements Serializable{
 
 	String name
 	

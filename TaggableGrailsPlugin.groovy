@@ -43,7 +43,7 @@ A plugin that adds a generic mechanism for tagging data
     // URL to the plugin's documentation
     def documentation = "http://grails.org/Taggable+Plugin"
 
-    def doWithSpring = {
+    def doWithDynamicMethods = {
 		for(domainClass in application.domainClasses) {
 			if(Taggable.class.isAssignableFrom(domainClass.clazz)) {
 				domainClass.clazz.metaClass {

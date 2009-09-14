@@ -22,7 +22,7 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.5"
+    def version = "0.6"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
@@ -49,7 +49,14 @@ A plugin that adds a generic mechanism for tagging data
 				domainClass.clazz.metaClass {
 					addTag { String name ->
 						if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
-						def tag = Tag.findByName(name, [cache:true]) ?: new Tag(name:name).save()
+						def tag
+						if (!Tag.preserveCase) {
+						    name = name.toLowerCase()
+						    tag = Tag.findByName(name, [cache:true]) ?: new Tag(name:name).save()
+						} else {
+						    // Even though we preserve case when we save, we still search case insensitive
+						    tag = Tag.findByNameIlike(name, [cache:true]) ?: new Tag(name:name).save()
+						}
 						if(!tag) throw new TagException("Value [$name] is not a valid tag")
 						
 						def criteria = TagLink.createCriteria()
@@ -84,11 +91,19 @@ A plugin that adds a generic mechanism for tagging data
 					removeTag { String name ->
 						if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
 						
+						if (!Tag.preserveCase) {
+						    name = name.toLowerCase()
+						}
+						
 						def criteria = TagLink.createCriteria()
 						def instance = delegate
 						def link = criteria.get {
 							tag {
-								eq 'name', name
+        						if (!Tag.preserveCase) {
+								    eq 'name', name
+							    } else {
+								    ilike 'name', name
+							    }
 							}
 							eq 'tagRef', instance.id
 							eq 'type', GrailsNameUtils.getPropertyName(instance.class)

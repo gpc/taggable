@@ -11,17 +11,40 @@ class TaggableTests extends GrailsUnitTestCase {
         super.tearDown()
     }
 
-    void testAddTagMethod() {
+    void testAddTagMethodCaseInsensitive() {
 		def td = new TestDomain(name:"foo")
 		td.save()
 		
-		td.addTag("groovy")
+		td.addTag("Groovy")
 		  .addTag("grails")
 		
 		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )
+    }
+    
+    void testAddTagMethodCaseSensitive() {
+        org.grails.taggable.Tag.preserveCase = true
+        
+		def td = new TestDomain(name:"foo")
+		td.save()
+		
+		td.addTag("Groovy")
+		  .addTag("grails")
+		
+		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
+		
+		assertEquals 2, links.size()
+		assertEquals( ['Groovy', 'grails'], links.tag.name )
+
+        // adding a second, even if preserving case in DB it should still not add it as already has such a tag
+		td.addTag("groovy")
+		
+		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
+		
+		assertEquals 2, links.size()
+		assertEquals( ['Groovy', 'grails'], links.tag.name )
     }
     
     void testAddTagsMethod() {

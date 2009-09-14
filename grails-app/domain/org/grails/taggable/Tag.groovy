@@ -23,10 +23,15 @@ import org.codehaus.groovy.grails.commons.*
  */
 class Tag implements Serializable{
 
+    static transients = ['caseSensitive']
+    
+    static boolean preserveCase = ConfigurationHolder.config.grails.taggable.preserve.case == null ? false :
+        ConfigurationHolder.config.grails.taggable.preserve.case.toString().toBoolean()
+    
 	String name
 	
     void setName(String name) {
-        this.@name = name.toLowerCase()
+        this.@name = Tag.preserveCase ? name : name.toLowerCase()
     }
 
     String toString() {

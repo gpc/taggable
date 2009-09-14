@@ -24,7 +24,7 @@ class TaggableTests extends GrailsUnitTestCase {
 		assertEquals( ['groovy', 'grails'], links.tag.name )
     }
     
-    void testAddTagMethodCaseSensitive() {
+    void testAddTagMethodCasePreserving() {
         org.grails.taggable.Tag.preserveCase = true
         
 		def td = new TestDomain(name:"foo")
@@ -43,8 +43,8 @@ class TaggableTests extends GrailsUnitTestCase {
 		
 		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		
-		assertEquals 2, links.size()
-		assertEquals( ['Groovy', 'grails'], links.tag.name )
+		assertEquals 3, links.size()
+		assertEquals( ['Groovy', 'grails', 'groovy'], links.tag.name )
     }
     
     void testAddTagsMethod() {

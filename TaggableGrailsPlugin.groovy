@@ -52,11 +52,8 @@ A plugin that adds a generic mechanism for tagging data
 						def tag
 						if (!Tag.preserveCase) {
 						    name = name.toLowerCase()
-						    tag = Tag.findByName(name, [cache:true]) ?: new Tag(name:name).save()
-						} else {
-						    // Even though we preserve case when we save, we still search case insensitive
-						    tag = Tag.findByNameIlike(name, [cache:true]) ?: new Tag(name:name).save()
 						}
+					    tag = Tag.findByName(name, [cache:true]) ?: new Tag(name:name).save()
 						if(!tag) throw new TagException("Value [$name] is not a valid tag")
 						
 						def criteria = TagLink.createCriteria()

@@ -35,6 +35,7 @@ class TagLink implements Serializable {
 
 	static mapping = {
 		cache 'read-write'
+		tag cache:true, fetch:'join'
 		
 		def config = ConfigurationHolder.config
 		if(config.grails.taggable.table) {

@@ -1,4 +1,4 @@
-<plugin name='taggable' version='0.6' grailsVersion='1.1 &gt; *'>
+<plugin name='taggable' version='0.6.1' grailsVersion='1.1 &gt; *'>
   <author>Graeme Rocher</author>
   <authorEmail>graeme.rocher@springsource.com</authorEmail>
   <title>Taggable Plugin</title>
@@ -16,6 +16,7 @@ A plugin that adds a generic mechanism for tagging data
   </resources>
   <dependencies>
     <plugin name='hibernate' version='1.1 &gt; *' />
+    <resolvers />
   </dependencies>
   <behavior>
     <method name='addTag' artefact='Domain' type='org.grails.taggable.TestDomain'>

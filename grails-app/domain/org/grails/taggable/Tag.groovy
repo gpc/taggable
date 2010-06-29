@@ -50,7 +50,7 @@ class Tag implements Serializable{
 		cache 'read-write'
 		
 		def config = ConfigurationHolder.config
-		if(config.grails.taggable.table) {
+		if(config.grails.taggable.tag.table) {
 			table config.grails.taggable.tag.table.toString()
 		}
 		else {

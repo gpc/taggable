@@ -38,7 +38,7 @@ class TagLink implements Serializable {
 		tag cache:true, fetch:'join'
 		
 		def config = ConfigurationHolder.config
-		if(config.grails.taggable.table) {
+		if(config.grails.taggable.tagLink.table) {
 			table config.grails.taggable.tagLink.table.toString()
 		}
 		else {

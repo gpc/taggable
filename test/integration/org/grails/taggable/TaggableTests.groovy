@@ -148,6 +148,38 @@ class TaggableTests extends GrailsUnitTestCase {
 		
 	}
 	
+	void testFindAllByTagPolymorphic() {
+		new TestDomain(name:"foo")
+		   .save()		
+		  .addTag("groovy")
+		  .addTag("grails")
+		  .addTag("griffon")		
+		new TestDescendent(name:"bar", other:'bla')
+		   .save()		
+		  .addTag("groovy")
+		  .addTag("grails")
+		  .addTag("gradle")
+
+
+		def results = TestDomain.findAllByTag("groovy")
+		
+		assertEquals 2, results.size()
+		assertTrue results[0] instanceof TestDomain
+		
+		assertEquals 2, TestDomain.findAllByTag("groovy").size()			
+		assertEquals 1, TestDescendent.findAllByTag("groovy").size()			
+
+		assertEquals 2, TestDomain.findAllByTag("grails").size()					
+		assertEquals 1, TestDescendent.findAllByTag("grails").size()			
+
+		assertEquals 1, TestDomain.findAllByTag("gradle").size()			
+		assertEquals 1, TestDescendent.findAllByTag("gradle").size()			
+
+		assertEquals 1, TestDomain.findAllByTag("griffon").size()							
+		assertEquals 0, TestDomain.findAllByTag("nothing").size()							
+		assertEquals 0, TestDomain.findAllByTag(null).size()											
+		
+	}	
 
 	void testCountByTag() {
 		
@@ -159,12 +191,24 @@ class TaggableTests extends GrailsUnitTestCase {
 		new TestDomain(name:"bar")
 		   .save()		
 		  .addTag("groovy")
-		  .addTag("grails")
+		  .addTag("grails") 
+  		new TestDescendent(name:"bla", other:'zzzz')
+  		   .save()		
+  		  .addTag("groovy")
+  		  .addTag("grails")
+  		  .addTag("gradle")
 
 
-		assertEquals 2, TestDomain.countByTag("groovy")
+		assertEquals 3, TestDomain.countByTag("groovy")
+		assertEquals 1, TestDescendent.countByTag("groovy")
+
 		assertEquals 1, TestDomain.countByTag("griffon")		
-		assertEquals 0, TestDomain.countByTag("rubish")		
+		assertEquals 0, TestDescendent.countByTag("griffon")		
+
+		assertEquals 1, TestDomain.countByTag("gradle")		
+		assertEquals 1, TestDescendent.countByTag("gradle")		
+
+		assertEquals 0, TestDomain.countByTag("rubbish")		
 		assertEquals 0, TestDomain.countByTag(null)				
 		
 	}
@@ -179,10 +223,17 @@ class TaggableTests extends GrailsUnitTestCase {
 		   .save()		
 		  .addTag("groovy")
 		  .addTag("grails")
+  		new TestDescendent(name:"bla", other:'zzzz')
+  		   .save()		
+  		  .addTag("groovy")
+  		  .addTag("grails")
+  		  .addTag("gradle")
 
+		assertEquals( ['gradle','grails','griffon','groovy'], TestDomain.allTags )
+		assertEquals 4, TestDomain.totalTags
 
-		assertEquals( ['grails','griffon','groovy'], TestDomain.allTags )
-		assertEquals 3, TestDomain.totalTags
+		assertEquals( ['gradle','grails','groovy'], TestDescendent.allTags )
+		assertEquals 3, TestDescendent.totalTags
 	}
 	
 	void testParseTags() {

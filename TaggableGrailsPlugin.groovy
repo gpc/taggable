@@ -22,7 +22,7 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "0.6.1"
+    def version = "0.6.2-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // the other plugins this plugin depends on
@@ -30,9 +30,11 @@ class TaggableGrailsPlugin {
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
             "grails-app/views/error.gsp",
-			"grails-app/domain/org/grails/taggable/TestDomain.groovy"
+			"grails-app/domain/org/grails/taggable/Test*.groovy"
     ]
 
+    def observe = ['hibernate']
+    
     def author = "Graeme Rocher"
     def authorEmail = "graeme.rocher@springsource.com"
     def title = "Taggable Plugin"
@@ -44,6 +46,9 @@ A plugin that adds a generic mechanism for tagging data
     def documentation = "http://grails.org/Taggable+Plugin"
 
     def doWithDynamicMethods = {
+        def tagService = applicationContext.taggableService
+        tagService.refreshDomainClasses()
+
 		for(domainClass in application.domainClasses) {
 			if(Taggable.class.isAssignableFrom(domainClass.clazz)) {
 				domainClass.clazz.metaClass {
@@ -76,7 +81,7 @@ A plugin that adds a generic mechanism for tagging data
 					}
 					
 					getTags {->
-						delegate.id ? getTagLinks(delegate).tag.name : []
+						delegate.id ? getTagLinks(tagService, delegate).tag.name : []
 					}					
 					parseTags { String tags, String delimiter = "," ->
 						tags.split(delimiter).each { 
@@ -115,7 +120,7 @@ A plugin that adds a generic mechanism for tagging data
 
                         if (tags) {
                             // remove old tags that not appear in the new tags
-                            getTagLinks(delegate)*.each { TagLink tagLink ->
+                            getTagLinks(tagService, delegate)*.each { TagLink tagLink ->
                                 if (tags.contains(tagLink.tag.name)) {
                                     tags.remove(tagLink.tag.name)
                                 } else {
@@ -126,7 +131,7 @@ A plugin that adds a generic mechanism for tagging data
                             // add the rest
                             addTags(tags)
                         } else {
-                            getTagLinks(delegate)*.delete()
+                            getTagLinks(tagService, delegate)*.delete()
                         }
 					}
 					
@@ -136,7 +141,7 @@ A plugin that adds a generic mechanism for tagging data
 							def clazz = delegate
 							TagLink.withCriteria {
 								projections { tag { distinct "name" } }
-								eq 'type', GrailsNameUtils.getPropertyName(clazz.name)
+								'in'('type', tagService.domainClassFamilies[clazz.name])
 								cache true
 							}
 						}
@@ -144,14 +149,14 @@ A plugin that adds a generic mechanism for tagging data
 							def clazz = delegate
 							TagLink.createCriteria().get {
 								projections { tag { countDistinct "name" } }
-								eq 'type', GrailsNameUtils.getPropertyName(clazz.name)
+								'in'('type', tagService.domainClassFamilies[clazz.name])
 								cache true
 							}							
 						}
 						countByTag { String tag ->
-							def identifiers = TaggableGrailsPlugin.getTagReferences(tag, delegate.name)
+							def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, tag, delegate.name)
 							if(identifiers) {
-								def criteria = createCriteria()
+								def criteria = delegate.createCriteria()
 								criteria.get {
 									projections {
 										rowCount()
@@ -166,7 +171,7 @@ A plugin that adds a generic mechanism for tagging data
 						}
 						
 						findAllByTag { String name->
-							def identifiers = TaggableGrailsPlugin.getTagReferences(name, delegate.name)
+							def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, delegate.name)
 							if(identifiers) {
 								delegate.findAllByIdInList(identifiers, [cache:true])
 							}
@@ -175,7 +180,7 @@ A plugin that adds a generic mechanism for tagging data
 							}
 						}
 						findAllByTag { String name, Map args->
-							def identifiers = TaggableGrailsPlugin.getTagReferences(name, delegate.name)
+							def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, delegate.name)
 							if(identifiers) {
 								args.cache=true
 								delegate.findAllByIdInList(identifiers, args)
@@ -186,7 +191,7 @@ A plugin that adds a generic mechanism for tagging data
 						}
                         findAllByTagWithCriteria { String name, Closure crit ->
                             def clazz = delegate
-                            def identifiers = TaggableGrailsPlugin.getTagReferences(name, clazz.name)
+                            def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, clazz.name)
                             if(identifiers) {
                                 args.cache=true
                                 return clazz.withCriteria {
@@ -204,7 +209,7 @@ A plugin that adds a generic mechanism for tagging data
                             def clazz = delegate
 							TagLink.withCriteria {
 								projections { tag { distinct "name" } }
-								eq 'type', GrailsNameUtils.getPropertyName(clazz.name)
+								'in'('type', tagService.domainClassFamilies[clazz.name])
 								cache true
                                 tag(criteria)
 
@@ -226,11 +231,15 @@ A plugin that adds a generic mechanism for tagging data
 		}
     }
 
-	private getTagLinks(obj) {
-		TagLink.findAllByTagRefAndType(obj.id, GrailsNameUtils.getPropertyName(obj.class), [cache:true])		
+	private getTagLinks(tagService, obj) {
+		TagLink.findAllByTagRefAndTypeInList(obj.id, tagService.domainClassFamilies[obj.class.name], [cache:true])		
 	}
 	
-	static getTagReferences(String tagName, String className) {
+    def onChange = { event ->
+        applicationContext.taggableService.refreshDomainClasses()
+    }
+
+	static getTagReferences(tagService, String tagName, String className) {
 		if(tagName) {
 			TagLink.withCriteria {
 				projections {
@@ -239,7 +248,7 @@ A plugin that adds a generic mechanism for tagging data
 				tag {
 					eq 'name', tagName							
 				}				
-				eq 'type', GrailsNameUtils.getPropertyName(className)
+				'in'('type', tagService.domainClassFamilies[className])
 				cache true
 			}
 			

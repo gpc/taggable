@@ -19,10 +19,11 @@ class TaggableService {
                 count('tagRef')
             }
         }.each {
-            def (tagName, count) = it
+            def tagName = it[0].name
+            def count = it[1]
             tagCounts[tagName] = tagCounts[tagName] ? (tagCounts[tagName] + count) : count
         }
-        tagCounts
+        return tagCounts
     }
     
     /**

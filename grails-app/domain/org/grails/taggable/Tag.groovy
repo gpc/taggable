@@ -25,7 +25,7 @@ class Tag implements Serializable{
 
     static transients = ['caseSensitive']
     
-    static boolean preserveCase = ConfigurationHolder.config.grails.taggable.preserve.case == null ? false :
+    static boolean preserveCase = ConfigurationHolder.config.grails.taggable.preserve.case instanceof ConfigObject ? false :
         ConfigurationHolder.config.grails.taggable.preserve.case.toString().toBoolean()
     
 	String name
@@ -56,6 +56,12 @@ class Tag implements Serializable{
 		else {
 			table "tags"
 		}
+
+        if (config.grails.taggable.tag.autoImport instanceof Boolean) {
+            autoImport(config.grails.taggable.tag.autoImport) 
+        } else {
+            autoImport false
+        }
 	}
 
 }

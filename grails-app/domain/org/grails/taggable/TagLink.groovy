@@ -44,6 +44,12 @@ class TagLink implements Serializable {
 		else {
 			table "tag_links"
 		}
+
+        if (config.grails.taggable.tagLink.autoImport instanceof Boolean) {
+            autoImport(config.grails.taggable.tagLink.autoImport) 
+        } else {
+            autoImport false
+        }
 	}
 
 }

@@ -1,4 +1,4 @@
-<plugin name='taggable' version='1.0.BUILD-SNAPSHOT' grailsVersion='1.1 &gt; *'>
+<plugin name='taggable' version='1.0' grailsVersion='1.1 &gt; *'>
   <author>Graeme Rocher</author>
   <authorEmail>graeme.rocher@springsource.com</authorEmail>
   <title>Taggable Plugin</title>

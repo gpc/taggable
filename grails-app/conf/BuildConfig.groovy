@@ -21,5 +21,9 @@ grails.project.dependency.resolution = {
         build ":release:1.0.0.RC1", {
             exported = false
         }
+
+        runtime ":hibernate:$grailsVersion", {
+            export = false
+        }
     }
 }

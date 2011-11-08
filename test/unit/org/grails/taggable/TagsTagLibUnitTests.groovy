@@ -46,6 +46,18 @@ class TagsTagLibUnitTests extends TagLibUnitTestCase {
                 "</ol>"
     }
 
+    void testTagCloudWithLongCounts() {
+        tagLib.tagCloud tags: [hello: 1L, world: 10L, apple: 3L, orange: 7L], action: "byTag"
+
+        def tagOutput = tagLib.out.toString()
+        assert tagOutput == "<ol class=\"tagCloud\"><li class=\"smallest\">" + 
+                "<a href='/default/byTag/hello'>hello</a></li>" +
+                "<li class=\"largest\"><a href='/default/byTag/world'>world</a></li>" +
+                "<li class=\"small\"><a href='/default/byTag/apple'>apple</a></li>" +
+                "<li class=\"large\"><a href='/default/byTag/orange'>orange</a></li>" +
+                "</ol>"
+    }
+
     void testTagCloudWithControllerAttribute() {
         tagLib.tagCloud tags: [hello: 1, world: 10, apple: 3, orange: 7], controller: "plugin", action: "byTag"
 

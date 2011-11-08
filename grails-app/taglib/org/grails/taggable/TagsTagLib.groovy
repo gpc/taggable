@@ -57,6 +57,7 @@ class TagsTagLib {
                 tagRanking = (classes.size() * t.value).intdiv(maxCount)
             }
 
+            tagRanking = tagRanking?.toInteger()
             out << "<li class=\"${classes[tagRanking]}\">"
 
             paramsMap[idProperty] = t.key

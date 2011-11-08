@@ -22,13 +22,13 @@ import grails.util.*
  */
 class TaggableGrailsPlugin {
     // the plugin version
-    def version = "1.0"
+    def version = "1.0.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.1 > *"
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
             "grails-app/views/error.gsp",
-			"grails-app/domain/org/grails/taggable/Test*.groovy"
+            "grails-app/domain/org/grails/taggable/Test*.groovy"
     ]
 
     def observe = ['hibernate']
@@ -36,8 +36,8 @@ class TaggableGrailsPlugin {
     def author = "Graeme Rocher"
     def authorEmail = "graeme.rocher@springsource.com"
     def title = "Taggable Plugin"
-    def description = '''\\
-A plugin that adds a generic mechanism for tagging data
+    def description = '''\
+A plugin that adds a generic mechanism for tagging data.
 '''
 
     // URL to the plugin's documentation

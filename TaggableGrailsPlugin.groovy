@@ -47,72 +47,72 @@ A plugin that adds a generic mechanism for tagging data.
         def tagService = applicationContext.taggableService
         tagService.refreshDomainClasses()
 
-		for(domainClass in application.domainClasses) {
-			if(Taggable.class.isAssignableFrom(domainClass.clazz)) {
-				domainClass.clazz.metaClass {
-					addTag { String name ->
-						if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
-						def tag
-						if (!Tag.preserveCase) {
-						    name = name.toLowerCase()
-						}
-					    tag = Tag.findByName(name, [cache:true]) ?: new Tag(name:name).save()
-						if(!tag) throw new TagException("Value [$name] is not a valid tag")
-						
-						def criteria = TagLink.createCriteria()
-						def instance = delegate
-						def link = criteria.get {
-							eq 'tag', tag
-							eq 'tagRef', instance.id
-							eq 'type', GrailsNameUtils.getPropertyName(instance.class)
-							cache true
-						}
-						
-						if(!link) {
-							link = new TagLink(tag:tag, tagRef:delegate.id, type:GrailsNameUtils.getPropertyName(delegate.class)).save()
-						}
-						return delegate // for method chaining
-					}
-					
-					addTags { names ->
-					    names.each { delegate.addTag it }
-					}
-					
-					getTags {->
-						delegate.id ? getTagLinks(tagService, delegate).tag.name : []
-					}					
-					parseTags { String tags, String delimiter = "," ->
-						tags.split(delimiter).each { 
-							def tag = it.trim()
-							if(tag) addTag(tag) 
-						}
-						return delegate
-					}
-					removeTag { String name ->
-						if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
-						
-						if (!Tag.preserveCase) {
-						    name = name.toLowerCase()
-						}
-						
-						def criteria = TagLink.createCriteria()
-						def instance = delegate
-						def link = criteria.get {
-							tag {
-        						if (!Tag.preserveCase) {
-								    eq 'name', name
-							    } else {
-								    ilike 'name', name
-							    }
-							}
-							eq 'tagRef', instance.id
-							eq 'type', GrailsNameUtils.getPropertyName(instance.class)
-							cache true
-						}						
-						link?.delete()
-						return delegate
-					}
-					setTags { List tags ->
+        for(domainClass in application.domainClasses) {
+            if(Taggable.class.isAssignableFrom(domainClass.clazz)) {
+                domainClass.clazz.metaClass {
+                    addTag { String name ->
+                        if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
+                        def tag
+                        if (!Tag.preserveCase) {
+                            name = name.toLowerCase()
+                        }
+                        tag = Tag.findByName(name, [cache:true]) ?: new Tag(name:name).save()
+                        if(!tag) throw new TagException("Value [$name] is not a valid tag")
+                        
+                        def criteria = TagLink.createCriteria()
+                        def instance = delegate
+                        def link = criteria.get {
+                            eq 'tag', tag
+                            eq 'tagRef', instance.id
+                            eq 'type', GrailsNameUtils.getPropertyName(instance.class)
+                            cache true
+                        }
+                        
+                        if(!link) {
+                            link = new TagLink(tag:tag, tagRef:delegate.id, type:GrailsNameUtils.getPropertyName(delegate.class)).save()
+                        }
+                        return delegate // for method chaining
+                    }
+                    
+                    addTags { names ->
+                        names.each { delegate.addTag it }
+                    }
+                    
+                    getTags {->
+                        delegate.id ? getTagLinks(tagService, delegate).tag.name : []
+                    }                    
+                    parseTags { String tags, String delimiter = "," ->
+                        tags.split(delimiter).each { 
+                            def tag = it.trim()
+                            if(tag) addTag(tag) 
+                        }
+                        return delegate
+                    }
+                    removeTag { String name ->
+                        if(delegate.id == null) throw new TagException("You need to save the domain instance before tagging it")
+                        
+                        if (!Tag.preserveCase) {
+                            name = name.toLowerCase()
+                        }
+                        
+                        def criteria = TagLink.createCriteria()
+                        def instance = delegate
+                        def link = criteria.get {
+                            tag {
+                                if (!Tag.preserveCase) {
+                                    eq 'name', name
+                                } else {
+                                    ilike 'name', name
+                                }
+                            }
+                            eq 'tagRef', instance.id
+                            eq 'type', GrailsNameUtils.getPropertyName(instance.class)
+                            cache true
+                        }                        
+                        link?.delete()
+                        return delegate
+                    }
+                    setTags { List tags ->
                         // remove invalid tags
                         tags =  tags?.findAll { it }
 
@@ -131,62 +131,62 @@ A plugin that adds a generic mechanism for tagging data.
                         } else {
                             getTagLinks(tagService, delegate)*.delete()
                         }
-					}
-					
-					'static' {
-						
-						getAllTags {->
-							def clazz = delegate
-							TagLink.withCriteria {
-								projections { tag { distinct "name" } }
-								'in'('type', tagService.domainClassFamilies[clazz.name])
-								cache true
-							}
-						}
-						getTotalTags = {->
-							def clazz = delegate
-							TagLink.createCriteria().get {
-								projections { tag { countDistinct "name" } }
-								'in'('type', tagService.domainClassFamilies[clazz.name])
-								cache true
-							}							
-						}
-						countByTag { String tag ->
-							def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, tag, delegate.name)
-							if(identifiers) {
-								def criteria = delegate.createCriteria()
-								criteria.get {
-									projections {
-										rowCount()
-									}
-									inList 'id', identifiers
-									cache true
-								}
-							}
-							else {
-								return 0								
-							}
-						}
-						
-						findAllByTag { String name->
-							def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, delegate.name)
-							if(identifiers) {
-								delegate.findAllByIdInList(identifiers, [cache:true])
-							}
-							else {
-								return Collections.EMPTY_LIST								
-							}
-						}
-						findAllByTag { String name, Map args->
-							def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, delegate.name)
-							if(identifiers) {
-								args.cache=true
-								delegate.findAllByIdInList(identifiers, args)
-							}
-							else {
-								return Collections.EMPTY_LIST								
-							}
-						}
+                    }
+                    
+                    'static' {
+                        
+                        getAllTags {->
+                            def clazz = delegate
+                            TagLink.withCriteria {
+                                projections { tag { distinct "name" } }
+                                'in'('type', tagService.domainClassFamilies[clazz.name])
+                                cache true
+                            }
+                        }
+                        getTotalTags = {->
+                            def clazz = delegate
+                            TagLink.createCriteria().get {
+                                projections { tag { countDistinct "name" } }
+                                'in'('type', tagService.domainClassFamilies[clazz.name])
+                                cache true
+                            }                            
+                        }
+                        countByTag { String tag ->
+                            def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, tag, delegate.name)
+                            if(identifiers) {
+                                def criteria = delegate.createCriteria()
+                                criteria.get {
+                                    projections {
+                                        rowCount()
+                                    }
+                                    inList 'id', identifiers
+                                    cache true
+                                }
+                            }
+                            else {
+                                return 0                                
+                            }
+                        }
+                        
+                        findAllByTag { String name->
+                            def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, delegate.name)
+                            if(identifiers) {
+                                delegate.findAllByIdInList(identifiers, [cache:true])
+                            }
+                            else {
+                                return Collections.EMPTY_LIST                                
+                            }
+                        }
+                        findAllByTag { String name, Map args->
+                            def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, delegate.name)
+                            if(identifiers) {
+                                args.cache=true
+                                delegate.findAllByIdInList(identifiers, args)
+                            }
+                            else {
+                                return Collections.EMPTY_LIST                                
+                            }
+                        }
                         findAllByTagWithCriteria { String name, Closure crit ->
                             def clazz = delegate
                             def identifiers = TaggableGrailsPlugin.getTagReferences(tagService, name, clazz.name)
@@ -205,10 +205,10 @@ A plugin that adds a generic mechanism for tagging data.
                         }
                         findAllTagsWithCriteria { Map params, Closure criteria ->
                             def clazz = delegate
-							TagLink.withCriteria {
-								projections { tag { distinct "name" } }
-								'in'('type', tagService.domainClassFamilies[clazz.name])
-								cache true
+                            TagLink.withCriteria {
+                                projections { tag { distinct "name" } }
+                                'in'('type', tagService.domainClassFamilies[clazz.name])
+                                cache true
                                 tag(criteria)
 
                                 if (params.offset != null) {
@@ -220,40 +220,40 @@ A plugin that adds a generic mechanism for tagging data.
                                 tag {
                                     order('name', 'asc')
                                 }
-							}
+                            }
                         }
 
-					}
-				}
-			}
-		}
+                    }
+                }
+            }
+        }
     }
 
-	private getTagLinks(tagService, obj) {
-		TagLink.findAllByTagRefAndTypeInList(obj.id, tagService.domainClassFamilies[obj.class.name], [cache:true])		
-	}
-	
+    private getTagLinks(tagService, obj) {
+        TagLink.findAllByTagRefAndTypeInList(obj.id, tagService.domainClassFamilies[obj.class.name], [cache:true])        
+    }
+    
     def onChange = { event ->
         applicationContext.taggableService.refreshDomainClasses()
     }
 
-	static getTagReferences(tagService, String tagName, String className) {
-		if(tagName) {
-			TagLink.withCriteria {
-				projections {
-					property 'tagRef'
-				}
-				tag {
-					eq 'name', tagName							
-				}				
-				'in'('type', tagService.domainClassFamilies[className])
-				cache true
-			}
-			
-		}	
-		else {
-			return Collections.EMPTY_LIST
-		}	
-	}
+    static getTagReferences(tagService, String tagName, String className) {
+        if(tagName) {
+            TagLink.withCriteria {
+                projections {
+                    property 'tagRef'
+                }
+                tag {
+                    eq 'name', tagName                            
+                }                
+                'in'('type', tagService.domainClassFamilies[className])
+                cache true
+            }
+            
+        }    
+        else {
+            return Collections.EMPTY_LIST
+        }    
+    }
 
 }

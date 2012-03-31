@@ -28,8 +28,9 @@ class TagsTagLib {
      */
     def tagCloud = { attrs ->
         if (!attrs.action) throwTagError("Required attribute [action] is missing")
-        if (!attrs.tags) throwTagError("Required attribute [tags] is missing")
-        if (!(attrs instanceof Map)) throwTagError("Required attribute [tags] must be a map of tag names to tag counts")
+        if (attrs.tags != null && !(attrs instanceof Map)) {
+            throwTagError("Required attribute [tags] must be a map of tag names to tag counts")
+        }
 
         def classes = grailsApplication.config.grails.taggable.css.classes ?: defaultCssClasses
 
@@ -43,9 +44,10 @@ class TagsTagLib {
         if (attrs.controller) linkArgs["controller"] = attrs.controller
 
         // How many times has the most used tag been applied?
-        def maxCount = attrs.tags.values().max()
+        def tagMap = attrs.tags ?: [:]
+        def maxCount = tagMap.values().max()
         out << "<ol class=\"tagCloud\">"
-        for (t in attrs.tags) {
+        for (t in tagMap) {
             def tagRanking
             if (t.value == maxCount) {
                 tagRanking = classes.size() - 1

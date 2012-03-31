@@ -21,11 +21,9 @@ import grails.util.*
  * @author Graeme Rocher
  */
 class TaggableGrailsPlugin {
-    // the plugin version
-    def version = "1.0.1"
-    // the version or versions of Grails the plugin is designed for
+    def version = "1.0.BUILD-SNAPSHOT"
     def grailsVersion = "1.1 > *"
-    // resources that are excluded from plugin packaging
+
     def pluginExcludes = [
             "grails-app/views/error.gsp",
             "grails-app/domain/org/grails/taggable/Test*.groovy"
@@ -42,6 +40,8 @@ A plugin that adds a generic mechanism for tagging data.
 
     // URL to the plugin's documentation
     def documentation = "http://grails.org/Taggable+Plugin"
+    def issueManagement = [system: "JIRA", url: "http://jira.grails.org/browse/GPTAGGABLE"]
+    def scm = [url: "https://github.com/gpc/grails-taggable"]
 
     def doWithDynamicMethods = {
         def tagService = applicationContext.taggableService

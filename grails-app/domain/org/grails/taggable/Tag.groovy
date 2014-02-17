@@ -43,7 +43,8 @@ class Tag implements Serializable{
     }
 
 	static constraints = {
-		name blank:false, unique:true
+		// 191 is the max length for indexed columns in mysql that use utf8mb4 charset
+		name blank:false, unique:true, maxSize:191 
 	}
 	
 	static mapping = {

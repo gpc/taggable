@@ -1,16 +1,18 @@
 package org.grails.taggable
 
-import grails.test.*
+import static org.junit.Assert.*
+import grails.test.mixin.TestMixin
+import grails.test.mixin.integration.IntegrationTestMixin
 
-class TaggableTests extends GrailsUnitTestCase {
-    protected void setUp() {
-        super.setUp()
+import org.junit.Before
+
+@TestMixin(IntegrationTestMixin)
+class TaggableTests {
+    @Before
+    void resetConfig() {
+        Tag.preserveCaseForTesting = false
     }
-
-    protected void tearDown() {
-        super.tearDown()
-    }
-
+    
     void testAddTagMethodCaseInsensitive() {
 		def td = new TestDomain(name:"foo")
 		td.save()
@@ -25,7 +27,7 @@ class TaggableTests extends GrailsUnitTestCase {
     }
     
     void testAddTagMethodCasePreserving() {
-        org.grails.taggable.Tag.preserveCase = true
+        Tag.preserveCaseForTesting = true
         
 		def td = new TestDomain(name:"foo")
 		td.save()
@@ -112,8 +114,8 @@ class TaggableTests extends GrailsUnitTestCase {
 		
 		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		assertEquals 2, links.size()
-		assertEquals( ['foo', 'bar'], links.tag.name )	
-		assertEquals( ['foo', 'bar'], td.tags )			
+		assertEquals( ['foo', 'bar'].sort(true), links.tag.name.sort(true) )	
+		assertEquals( ['foo', 'bar'].sort(true), td.tags.sort(true) )			
 		
 		td.tags = []			
 		
@@ -229,10 +231,10 @@ class TaggableTests extends GrailsUnitTestCase {
   		  .addTag("grails")
   		  .addTag("gradle")
 
-		assertEquals( ['gradle','grails','griffon','groovy'], TestDomain.allTags )
+		assertEquals( ['gradle','grails','griffon','groovy'].sort(true), TestDomain.allTags.sort(true) )
 		assertEquals 4, TestDomain.totalTags
 
-		assertEquals( ['gradle','grails','groovy'], TestDescendent.allTags )
+		assertEquals( ['gradle','grails','groovy'].sort(true), TestDescendent.allTags.sort(true) )
 		assertEquals 3, TestDescendent.totalTags
 	}
 	

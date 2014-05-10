@@ -25,8 +25,12 @@ class Tag implements Serializable{
 
     static transients = ['caseSensitive']
 
-    static @Lazy boolean preserveCase = { Holders.config.grails.taggable.preserve.case instanceof ConfigObject ? false :
+    static Boolean preserveCaseForTesting = null
+    static @Lazy boolean preserveCaseFromConfig = { Holders.config.grails.taggable.preserve.case instanceof ConfigObject ? false :
     Holders.config.grails.taggable.preserve.case.toString().toBoolean() }
+    static boolean getPreserveCase() {
+        return (preserveCaseForTesting != null) ? preserveCaseForTesting : preserveCaseFromConfig
+    }
 
     String name
 

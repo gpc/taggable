@@ -28,7 +28,7 @@ class TagsTagLib {
      */
     def tagCloud = { attrs ->
         if (!attrs.action) throwTagError("Required attribute [action] is missing")
-        if (attrs.tags != null && !(attrs instanceof Map)) {
+        if (attrs.tags == null || !(attrs.tags instanceof Map)) {
             throwTagError("Required attribute [tags] must be a map of tag names to tag counts")
         }
 

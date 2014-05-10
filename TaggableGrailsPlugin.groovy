@@ -21,8 +21,8 @@ import grails.util.*
  * @author Graeme Rocher
  */
 class TaggableGrailsPlugin {
-    def version = "1.0.BUILD-SNAPSHOT"
-    def grailsVersion = "1.1 > *"
+    def version = "1.1.0"
+    def grailsVersion = "2.3 > *"
 
     def pluginExcludes = [
             "grails-app/views/error.gsp",

@@ -14,7 +14,7 @@
  */
 package org.grails.taggable
 
-import org.codehaus.groovy.grails.commons.*
+import grails.util.Holders
 
 /**
  * A tag entity used to store the tag names
@@ -24,12 +24,12 @@ import org.codehaus.groovy.grails.commons.*
 class Tag implements Serializable{
 
     static transients = ['caseSensitive']
-    
-    static boolean preserveCase = ConfigurationHolder.config.grails.taggable.preserve.case instanceof ConfigObject ? false :
-        ConfigurationHolder.config.grails.taggable.preserve.case.toString().toBoolean()
-    
-	String name
-	
+
+    static @Lazy boolean preserveCase = { Holders.config.grails.taggable.preserve.case instanceof ConfigObject ? false :
+    Holders.config.grails.taggable.preserve.case.toString().toBoolean() }
+
+    String name
+
     void setName(String name) {
         this.@name = Tag.preserveCase ? name : name.toLowerCase()
     }
@@ -38,30 +38,27 @@ class Tag implements Serializable{
         name
     }
 
-    static searchable = {
-        only = ['name']
+    static searchable = { only = ['name'] }
+
+    static constraints = {
+        name blank:false, unique:true
     }
 
-	static constraints = {
-		name blank:false, unique:true
-	}
-	
-	static mapping = {
-		cache 'read-write'
-		
-		def config = ConfigurationHolder.config
-		if(config.grails.taggable.tag.table) {
-			table config.grails.taggable.tag.table.toString()
-		}
-		else {
-			table "tags"
-		}
+    static mapping = {
+        cache 'read-write'
+
+        def config = Holders.config
+        if(config.grails.taggable.tag.table) {
+            table config.grails.taggable.tag.table.toString()
+        }
+        else {
+            table "tags"
+        }
 
         if (config.grails.taggable.tag.autoImport instanceof Boolean) {
-            autoImport(config.grails.taggable.tag.autoImport) 
+            autoImport(config.grails.taggable.tag.autoImport)
         } else {
             autoImport false
         }
-	}
-
+    }
 }

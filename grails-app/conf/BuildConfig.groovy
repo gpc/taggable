@@ -1,6 +1,8 @@
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir	= "target/test-reports"
+grails.project.work.dir = "target/work"
+grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits "global"
@@ -18,11 +20,11 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
     }
     plugins {
-        build ":release:1.0.0.RC1", {
+        build ':release:3.0.1', ':rest-client-builder:1.0.3', {
             exported = false
         }
 
-        runtime ":hibernate:$grailsVersion", {
+        runtime ":hibernate:3.6.10.14", {
             export = false
         }
     }

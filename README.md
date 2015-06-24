@@ -7,7 +7,7 @@ Taggable Plugin
 ---------------
 This plugin provides an alternative to the Acts as Taggable hosted at grails.org and with the following features.
 
-Classes can be made taggable by implementing the [org.grails.taggable.Taggable](/src/groovy/org/grails/taggable/Taggable.groovy) interface
+Classes can be made taggable by implementing the [grails.plugins.taggable.Taggable](/src/groovy/org/grails/taggable/Taggable.groovy) interface
 * Method chaining can be used to add tags
 * The table name the domain classes use is customizable
 * Utilizes extensive caching to improve performance
@@ -48,7 +48,7 @@ Usage
 Implement the `Taggable` interface:
 
 ```groovy
-import org.grails.taggable.*
+import grails.plugins.taggable.*
 class Vehicle implements Taggable {
 }
 ```

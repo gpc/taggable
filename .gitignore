@@ -1,3 +1,5 @@
+build/
+.gradle/
 *.iws
 *Db.properties
 *Db.script

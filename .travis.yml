@@ -1,0 +1,19 @@
+language: groovy
+jdk:
+- oraclejdk7
+before_script:
+- rm -rf target
+script: ./travis-build.sh
+env:
+  global:
+  - GIT_NAME="Graeme Rocher"
+  - GIT_EMAIL="graeme.rocher@gmail.com"
+  - secure: nDFWKPneybRf6eS5g/UimKxizX7Z/EyJgq6Zz++OIfENuLTK5ZfXNgeCB0E3CVQ/EsO1pZIi6rJz27s9sDeneBgmBdoKu4hAIVHk5jwL26SKFd1G3zy9+JHEGrYlgC4pcxKydWuhm7euqJT2ighuSlSIPjcSR9ep+87moHLv3NY=
+  - secure: MdCohHHlR+BT0YSkyqddr7ejNCwWNeg0epuPkCqoFRczOdNnT+TGeWrhxMzQVYPNpe2QG76sqrWwyGtJRAn6/Gch7bYfpHkoGWWsacm2VGXLPXucjyz2vVg+ZzWGirkssFfFVJsG33mljzhxjljGviKDgsVS2DYwRBO9OKQYqXY=
+  - secure: QOozG0LmSnIeslpKao6iudVCZ/MLGoI1nkELLDMer1EkZMOOD2jjWuTI1OvGeD2RKzeS2e78iyvXm5ohSSoAVqZ+IAKdG0SQWw/vXNUJV1PkgPO57DNnp5iyGwVh9vK+Q+iUy9veoRiaX91aWL5JzXobjHOxf7YcCjnYMZ/fTuU=
+  - secure: DOUGG6+sqQWYJlc8oa2Faio2lgMhU+gOo0eAGpn20omf0v/+4Wa/YqmaqW77TM0bRxtx0Qt1S8f2R4RfSum2M58Kn5FuNJPOFSycpRdUv7A5tmJ+aNtCUpx2oBOp4q31exQH4K3KPRidVE7DQDMPX7KkvvLD4G9C6V6qZUQ4SAY=
+  - secure: Pr2loG4v2x4xH/+K8NImt+Geo3wT7chY4tiCOXWnuqID/jU2CIRoEpk8df3YS3S2MtStnDEMMDWgMx+3rfCURMEGlr9Nd7z5XkukcgnWpbB4YEm2vx/B37cGhGmbeGJdQTanPvcG8HyoJuBlkhUEAFJ6kNtfcUZWnmtIj7/EfCM=
+sudo: false
+cache:
+  directories:
+  - $HOME/.gradle

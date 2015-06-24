@@ -26,8 +26,9 @@ class Tag implements Serializable{
     static transients = ['caseSensitive']
 
     static Boolean preserveCaseForTesting = null
-    static @Lazy boolean preserveCaseFromConfig = { Holders.config.grails.taggable.preserve.case instanceof ConfigObject ? false :
-    Holders.config.grails.taggable.preserve.case.toString().toBoolean() }
+    static @Lazy boolean preserveCaseFromConfig = { 
+        Holders.config.getProperty('grails.taggable.preserve.case', Boolean, false)
+    }
     static boolean getPreserveCase() {
         return (preserveCaseForTesting != null) ? preserveCaseForTesting : preserveCaseFromConfig
     }
@@ -50,19 +51,8 @@ class Tag implements Serializable{
 
     static mapping = {
         cache 'read-write'
-
         def config = Holders.config
-        if(config.grails.taggable.tag.table) {
-            table config.grails.taggable.tag.table.toString()
-        }
-        else {
-            table "tags"
-        }
-
-        if (config.grails.taggable.tag.autoImport instanceof Boolean) {
-            autoImport(config.grails.taggable.tag.autoImport)
-        } else {
-            autoImport false
-        }
+        table config.getProperty('grails.taggable.tag.table', String, "tags")
+        autoImport config.getProperty('grails.taggable.tag.autoImport', Boolean, false)
     }
 }

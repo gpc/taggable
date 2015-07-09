@@ -25,7 +25,7 @@ import grails.plugins.*
  */
 class TaggableGrailsPlugin extends Plugin {
     def version = "1.1.0"
-    def grailsVersion = "2.3 > *"
+    def grailsVersion = "3.0.3 > *"
     def license = 'APACHE'
     def pluginExcludes = [
             "grails-app/views/error.gsp",

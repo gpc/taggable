@@ -1,14 +1,17 @@
 package org.grails.taggable
 
+import grails.transaction.NotTransactional
+import grails.transaction.Transactional
 import grails.util.*
 
 import org.grails.taggable.*
 
+@Transactional
 class TaggableService {
     
     def grailsApplication
     
-    def domainClassFamilies = [:]
+    private domainClassFamilies = [:]
     
     def getTagCounts(type) {
         def tagCounts = [:]
@@ -50,5 +53,10 @@ class TaggableService {
                 domainClassFamilies[artefact.clazz.name].addAll(artefact.subClasses.collect { GrailsNameUtils.getPropertyName(it.clazz) })
             }
         }
+    }
+
+    @NotTransactional
+    def getTaggablePropertyName(className) {
+        return domainClassFamilies[className]
     }
 }

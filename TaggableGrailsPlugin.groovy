@@ -21,7 +21,7 @@ import grails.util.*
  * @author Graeme Rocher
  */
 class TaggableGrailsPlugin {
-    def version = "1.1.0"
+    def version = "1.1.2"
     def grailsVersion = "2.3 > *"
     def license = 'APACHE'
     def pluginExcludes = [
@@ -140,7 +140,7 @@ A plugin that adds a generic mechanism for tagging data.
                             def clazz = delegate
                             TagLink.withCriteria {
                                 projections { tag { distinct "name" } }
-                                'in'('type', tagService.domainClassFamilies[clazz.name])
+                                'in'('type', tagService.getTaggablePropertyName(clazz.name))
                                 cache true
                             }
                         }
@@ -148,7 +148,7 @@ A plugin that adds a generic mechanism for tagging data.
                             def clazz = delegate
                             TagLink.createCriteria().get {
                                 projections { tag { countDistinct "name" } }
-                                'in'('type', tagService.domainClassFamilies[clazz.name])
+                                'in'('type', tagService.getTaggablePropertyName(clazz.name))
                                 cache true
                             }                            
                         }
@@ -208,7 +208,7 @@ A plugin that adds a generic mechanism for tagging data.
                             def clazz = delegate
                             TagLink.withCriteria {
                                 projections { tag { distinct "name" } }
-                                'in'('type', tagService.domainClassFamilies[clazz.name])
+                                'in'('type', tagService.getTaggablePropertyName(clazz.name))
                                 cache true
                                 tag(criteria)
 
@@ -231,7 +231,7 @@ A plugin that adds a generic mechanism for tagging data.
     }
 
     private getTagLinks(tagService, obj) {
-        TagLink.findAllByTagRefAndTypeInList(obj.id, tagService.domainClassFamilies[obj.class.name], [cache:true])        
+        TagLink.findAllByTagRefAndTypeInList(obj.id, tagService.getTaggablePropertyName(obj.class.name), [cache:true])
     }
     
     def onChange = { event ->
@@ -247,7 +247,7 @@ A plugin that adds a generic mechanism for tagging data.
                 tag {
                     eq 'name', tagName                            
                 }                
-                'in'('type', tagService.domainClassFamilies[className])
+                'in'('type', tagService.getTaggablePropertyName(className))
                 cache true
             }
             

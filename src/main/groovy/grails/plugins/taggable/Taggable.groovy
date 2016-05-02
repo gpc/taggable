@@ -176,7 +176,6 @@ trait Taggable {
         def clazz = this
         def identifiers = getTagReferences(Holders.applicationContext.taggableService, name, clazz.name)
         if(identifiers) {
-            args.cache=true
             return clazz.withCriteria {
                 'in'('id', identifiers)
 
@@ -185,7 +184,7 @@ trait Taggable {
             }
         }
         else {
-            return Collections.EMPTY_LIST                                                           
+            return Collections.EMPTY_LIST
         }
     }
     static List<String> findAllTagsWithCriteria( Map params, Closure crit ) {
@@ -193,7 +192,7 @@ trait Taggable {
         def criteria = TagLink.createCriteria()
         criteria.list {
            criteria.projections { criteria.tag { criteria.distinct "name" } }
-           criteria.'in'('type', tagService.domainClassFamilies[clazz.name])
+           criteria.'in'('type', Holders.applicationContext.taggableService.domainClassFamilies[clazz.name])
            criteria.cache true
            criteria.tag(crit)
 

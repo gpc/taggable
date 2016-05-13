@@ -20,11 +20,11 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
     }
     plugins {
-        build ':release:3.0.1', ':rest-client-builder:1.0.3', {
-            exported = false
+        build(":release:3.1.1", ":rest-client-builder:2.1.1") {
+            export = false
         }
 
-        runtime ":hibernate:3.6.10.14", {
+        runtime ":hibernate:3.6.10.19", {
             export = false
         }
     }

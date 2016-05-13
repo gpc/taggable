@@ -21,7 +21,8 @@ import grails.util.*
  * @author Graeme Rocher
  */
 class TaggableGrailsPlugin {
-    def version = "1.1.2"
+    def groupId = 'org.icescrum'
+    def version = "1.1.3"
     def grailsVersion = "2.3 > *"
     def license = 'APACHE'
     def pluginExcludes = [
@@ -202,6 +203,25 @@ A plugin that adds a generic mechanism for tagging data.
                             }
                             else {
                                 return Collections.EMPTY_LIST                                                           
+                            }
+                        }
+                        findAllByTagsWithCriteria { List<String> names, Closure crit ->
+                            def clazz = delegate
+                            def identifiers = []
+                            names.each { name ->
+                                identifiers.addAll(TaggableGrailsPlugin.getTagReferences(tagService, name, clazz.name))
+                            }
+                            if(identifiers) {
+                                args.cache=true
+                                return clazz.withCriteria {
+                                    'in'('id', identifiers)
+
+                                    crit.delegate = delegate
+                                    crit.call()
+                                }
+                            }
+                            else {
+                                return Collections.EMPTY_LIST
                             }
                         }
                         findAllTagsWithCriteria { Map params, Closure criteria ->

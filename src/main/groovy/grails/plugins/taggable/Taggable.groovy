@@ -150,22 +150,14 @@ trait Taggable {
             return 0                                
         }
     }
-    
+
     static List findAllByTag( String name ) {
-        def identifiers = getTagReferences(Holders.applicationContext.taggableService, name, this.name)
+        findAllByTags( [name] )
+    }
+    static List findAllByTags( Collection<String> names ) {
+        def identifiers = getTagReferences(Holders.applicationContext.taggableService, names, this.name)
         if(identifiers) {
             return findAllByIdInList(identifiers, [cache:true])
-        }
-        else {
-            return Collections.EMPTY_LIST                                
-        }
-    }
-
-    static List findAllByTag ( String name, Map args ) {
-        def identifiers = getTagReferences(Holders.applicationContext.taggableService, name, this.name)
-        if(identifiers) {
-            args.cache=true
-            return findAllByIdInList(identifiers, args)
         }
         else {
             return Collections.EMPTY_LIST                                
@@ -211,7 +203,21 @@ trait Taggable {
     private getTagLinks(tagService, obj) {
         TagLink.findAllByTagRefAndTypeInList(obj.id, tagService.domainClassFamilies[obj.class.name], [cache:true])        
     }
-
+    private static getTagReferences(tagService, Collection<String> tagNames, String className) {
+            Set<Long> common = new LinkedHashSet<Long>()
+            if (tagNames) {
+                Iterator<String> iterator = tagNames.iterator()
+                common.addAll(
+                        getTagReferences(tagService, iterator.next(), className)
+                )
+                while (iterator.hasNext()) {
+                    common.retainAll(
+                            getTagReferences(tagService, iterator.next(), className)
+                    )
+                }
+            }
+            return common
+    }
     private static getTagReferences(tagService, String tagName, String className) {
         if(tagName) {
         	def criteria = TagLink.createCriteria()

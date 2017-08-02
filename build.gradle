@@ -49,7 +49,11 @@ dependencies {
     compile "org.grails.plugins:async"
     compile "org.grails.plugins:gsp"
     profile "org.grails.profiles:web-plugin"
+    testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails.plugins:geb"
+    testCompile "org.grails:grails-web-testing-support"
+    testCompile "org.grails:grails-test-mixins:3.3.0.RC1"
 
     console "org.grails:grails-console"
 }

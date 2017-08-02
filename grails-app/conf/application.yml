@@ -2,7 +2,7 @@
 grails:
     profile: web-plugin
     codegen:
-        defaultPackage: taggable
+        defaultPackage: grails.plugins.taggable
 info:
     app:
         name: '@info.app.name@'

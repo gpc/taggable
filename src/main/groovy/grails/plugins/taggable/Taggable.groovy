@@ -94,6 +94,8 @@ trait Taggable {
 
     Taggable setTags( List tags ) {
         // remove invalid tags
+
+        System.out.println "****** ${tags.size()}"
         tags =  tags?.findAll { it }
 
         if (tags) {

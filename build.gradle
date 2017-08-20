@@ -49,6 +49,8 @@ dependencies {
     compile "org.grails.plugins:async"
     compile "org.grails.plugins:gsp"
     profile "org.grails.profiles:web-plugin"
+    runtime "com.h2database:h2"
+    runtime "org.apache.tomcat:tomcat-jdbc"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"

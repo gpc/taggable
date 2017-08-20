@@ -115,11 +115,7 @@ class TaggableTests {
 		
 		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 
-		// Grails 3.3.0 - fails links.size() returns 4 
-		// foo, bar, groovy, grails
-		// Grails 3.1.8 - links.size() returns 2
 		assertEquals 2, links.size() 
-
 		assertEquals( ['foo', 'bar'].sort(true), links.tag.name.sort(true) )	
 		assertEquals( ['foo', 'bar'].sort(true), td.tags.sort(true) )		
 		

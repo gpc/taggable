@@ -114,8 +114,12 @@ class TaggableTests {
 		td.tags = ["foo", "bar"]			
 		
 		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
-/*
-		assertEquals 2, links.size() // fails is 4 -- foo, bar, groovy, grails
+
+		// Grails 3.3.0 - fails links.size() returns 4 
+		// foo, bar, groovy, grails
+		// Grails 3.1.8 - links.size() returns 2
+		assertEquals 2, links.size() 
+
 		assertEquals( ['foo', 'bar'].sort(true), links.tag.name.sort(true) )	
 		assertEquals( ['foo', 'bar'].sort(true), td.tags.sort(true) )		
 		
@@ -124,7 +128,7 @@ class TaggableTests {
 		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
 		assertEquals 0, links.size()
 		assertEquals( [], links.tag.name )	
-		assertEquals( [], td.tags )		*/			
+		assertEquals( [], td.tags )					
 	}
 	
 	void testFindAllByTag() {

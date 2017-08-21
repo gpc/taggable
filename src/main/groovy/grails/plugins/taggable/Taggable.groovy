@@ -102,7 +102,7 @@ trait Taggable {
                 if (tags.contains(tagLink.tag.name)) {
                     tags.remove(tagLink.tag.name)
                 } else {
-                    tagLink.delete()
+                    tagLink.delete(flush:true) // Grails >=3.3.0 requires flush
                 }
             }
 

@@ -104,9 +104,9 @@ class TaggableTests {
 		td.save()
 		
 		td.tags = ["groovy", null, "grails", '']
-		
+
 		def links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
-		
+
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )	
 		assertEquals( ['groovy', 'grails'], td.tags )			
@@ -114,9 +114,10 @@ class TaggableTests {
 		td.tags = ["foo", "bar"]			
 		
 		links = TagLink.findAllWhere(tagRef:td.id, type:'testDomain')
-		assertEquals 2, links.size()
+
+		assertEquals 2, links.size() 
 		assertEquals( ['foo', 'bar'].sort(true), links.tag.name.sort(true) )	
-		assertEquals( ['foo', 'bar'].sort(true), td.tags.sort(true) )			
+		assertEquals( ['foo', 'bar'].sort(true), td.tags.sort(true) )		
 		
 		td.tags = []			
 		

@@ -1,5 +1,3 @@
-
-
 package grails.plugins.taggable
 
 import grails.test.mixin.TestFor

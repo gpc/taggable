@@ -1,21 +1,22 @@
 package grails.plugins.taggable
 
 import grails.gorm.transactions.Rollback
-import grails.test.mixin.TestMixin
-import grails.test.mixin.integration.IntegrationTestMixin
+import grails.testing.mixin.integration.Integration
 import org.junit.Before
+import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 
-@TestMixin(IntegrationTestMixin)
+@Integration
 @Rollback
 class TaggableTests {
     @Before
     void resetConfig() {
         Tag.preserveCaseForTesting = false
     }
-    
+
+	@Test
     void testAddTagMethodCaseInsensitive() {
 		def td = new TestDomain(name:"foo")
 		td.save()
@@ -28,7 +29,8 @@ class TaggableTests {
 		assertEquals 2, links.size()
 		assertEquals( ['groovy', 'grails'], links.tag.name )
     }
-    
+
+	@Test
     void testAddTagMethodCasePreserving() {
         Tag.preserveCaseForTesting = true
         
@@ -51,7 +53,8 @@ class TaggableTests {
 		assertEquals 3, links.size()
 		assertEquals( ['Groovy', 'grails', 'groovy'], links.tag.name )
     }
-    
+
+	@Test
     void testAddTagsMethod() {
 		def td = new TestDomain(name:"foo")
 		td.save()
@@ -64,6 +67,7 @@ class TaggableTests {
 		assertEquals( ['groovy', 'grails'], links.tag.name )
     }
 
+	@Test
 	void testRemoveTagMethod() {
 		def td = new TestDomain(name:"foo")
 		td.save()
@@ -84,6 +88,7 @@ class TaggableTests {
 		
 	}
 
+	@Test
 	void testGetTagsMethod() {
 		
 		def td = new TestDomain(name:"foo")
@@ -100,7 +105,8 @@ class TaggableTests {
 		
      	assertEquals( ['groovy', 'grails'], td.tags )
 	}
-	    
+
+	@Test
 	void testSetTagsMethod() {
 		def td = new TestDomain(name:"foo")
 		td.save()
@@ -128,7 +134,8 @@ class TaggableTests {
 		assertEquals( [], links.tag.name )	
 		assertEquals( [], td.tags )					
 	}
-	
+
+	@Test
 	void testFindAllByTag() {
 		new TestDomain(name:"foo")
 		   .save()		
@@ -153,7 +160,7 @@ class TaggableTests {
 		assertEquals 0, TestDomain.findAllByTag(null).size()											
 		
 	}
-	
+	@Test
 	void testFindAllByTagPolymorphic() {
 		new TestDomain(name:"foo")
 		   .save()		
@@ -187,6 +194,7 @@ class TaggableTests {
 		
 	}	
 
+	@Test
 	void testCountByTag() {
 		
 		new TestDomain(name:"foo")
@@ -218,7 +226,8 @@ class TaggableTests {
 		assertEquals 0, TestDomain.countByTag(null)				
 		
 	}
-	
+
+	@Test
 	void testAllTags() {
 		new TestDomain(name:"foo")
 		   .save()		
@@ -241,7 +250,8 @@ class TaggableTests {
 		assertEquals( ['gradle','grails','groovy'].sort(true), TestDescendent.allTags.sort(true) )
 		assertEquals 3, TestDescendent.totalTags
 	}
-	
+
+	@Test
 	void testParseTags() {
 		def td = new TestDomain(name:"foo")
 		   			.save()
@@ -250,7 +260,8 @@ class TaggableTests {
 
 		assertEquals( ['grails','griffon','groovy'], TestDomain.allTags )				
 	}
-	
+
+	@Test
 	void testParseTagsWithDelimiter() {
 		def td = new TestDomain(name:"foo")
 		   			.save()

@@ -1,10 +1,12 @@
 package grails.plugins.taggable
 
-import static org.junit.Assert.*
+import grails.gorm.transactions.Rollback
 import grails.test.mixin.TestMixin
 import grails.test.mixin.integration.IntegrationTestMixin
-import grails.transaction.*
 import org.junit.Before
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
 @TestMixin(IntegrationTestMixin)
 @Rollback

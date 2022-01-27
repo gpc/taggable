@@ -53,7 +53,6 @@ dependencies {
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails.plugins:geb"
     testCompile "org.grails:grails-web-testing-support"
-//    testCompile "org.grails:grails-test-mixins:3.3.0.RC1"
 
     console "org.grails:grails-console"
 }

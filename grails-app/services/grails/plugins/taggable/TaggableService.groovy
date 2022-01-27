@@ -1,15 +1,23 @@
 package grails.plugins.taggable
 
-import grails.util.*
-
-import grails.plugins.taggable.*
+import grails.core.GrailsApplication
+import grails.core.GrailsDomainClass
+import grails.util.GrailsNameUtils
+import org.grails.datastore.mapping.model.MappingContext
+import org.grails.datastore.mapping.model.PersistentEntity
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 
 class TaggableService {
-    
-    def grailsApplication
-    
+
+    GrailsApplication grailsApplication
+
+    @Autowired
+    @Qualifier("grailsDomainClassMappingContext")
+    MappingContext mappingContext
+
     def domainClassFamilies = [:]
-    
+
     def getTagCounts(type) {
         def tagCounts = [:]
         TagLink.withCriteria {
@@ -43,11 +51,12 @@ class TaggableService {
      * ]
      */
     def refreshDomainClasses() {
-        grailsApplication.domainClasses.each { artefact ->
-            if( Taggable.class.isAssignableFrom(artefact.clazz)) {
+        grailsApplication.domainClasses.each {GrailsDomainClass artefact ->
+            PersistentEntity persistentEntity = mappingContext.getPersistentEntity(artefact.clazz.name)
+            if (Taggable.class.isAssignableFrom(artefact.clazz)) {
                 domainClassFamilies[artefact.clazz.name] = [GrailsNameUtils.getPropertyName(artefact.clazz)]
                 // Add class and all subclasses 
-                domainClassFamilies[artefact.clazz.name].addAll(artefact.subClasses.collect { GrailsNameUtils.getPropertyName(it.clazz) })
+                domainClassFamilies[artefact.clazz.name].addAll(mappingContext.getChildEntities(persistentEntity).collect {GrailsNameUtils.getPropertyName(it.javaClass)})
             }
         }
     }

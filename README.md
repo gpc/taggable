@@ -1,13 +1,13 @@
 Taggable Grails Plugin
 ======================
 
-The [Taggable plugin](http://grails.org/plugin/taggable) that adds a generic mechanism for tagging data.
+The [Taggable plugin](https://plugins.grails.org/plugin/grails/taggable) that adds a generic mechanism for tagging data.
 
 Taggable Plugin
 ---------------
 This plugin provides an alternative to the Acts as Taggable hosted at grails.org and with the following features.
 
-Classes can be made taggable by implementing the [grails.plugins.taggable.Taggable](/src/groovy/org/grails/taggable/Taggable.groovy) interface
+Classes can be made taggable by implementing the [grails.plugins.taggable.Taggable](/src/main/groovy/grails/plugins/taggable/Taggable.groovy) interface
 * Method chaining can be used to add tags
 * The table name the domain classes use is customizable
 * Utilizes extensive caching to improve performance
@@ -15,31 +15,39 @@ Classes can be made taggable by implementing the [grails.plugins.taggable.Taggab
 
 Requirements
 ------------
-Grails Version: 1.1 and above JDK: 1.5 and above
+Grails Version: 4.0.0
 
 Installation
 ------------
 
-Add this dependency to `BuildConfig.groovy`
+Add this dependency to `build.gradle`
+
 ```groovy
-grails.project.dependency.resolution = {
-  plugins {
-    compile ":taggable:1.0.1"
-  }
+    dependencies {
+    compile "io.github.gpc:taggable:4.0.0"
 }
+
 ```
 
-For old Grails 1.x
+By default, the plugin will force all tags to lower case. If you want to preserve the case of tags, you must specify the
+following in `application.yml`
+
+```yaml
+grails:
+    taggable:
+        preserve:
+            case: true
 ```
-grails install-plugin taggable
-```
-By default the plugin will force all tags to lower case. If you want to preserve the case of tags, you must specify the following in `Config.groovy`:
+
+alternatively in `application.groovy`:
 
 ```groovy
 grails.taggable.preserve.case = true
 ```
 
-This will preserve the supplied case of tags when adding and removing them. Eg adding tags "grails" and "Grails" will result in two tags on the object. The finder methods for locating objects by tag still require the exact case of the tag you want to find - each tag is treated as discrete.
+This will preserve the supplied case of tags when adding and removing them. Eg adding tags "grails" and "Grails" will
+result in two tags on the object. The finder methods for locating objects by tag still require the exact case of the tag
+you want to find - each tag is treated as discrete.
 
 
 Usage
@@ -112,18 +120,19 @@ String listAllHQL = """
    ORDER BY tag.name
 """
 def allTags = Vehicle.executeQuery(listAllHQL)
-
+```
 Tag parsing:
 
+```groovy
 def tags = "red,sporty,expensive"
 def v = Vehicle.get(1)
 v.parseTags(tags)
-assert ['expensive', 'red','sporty'] == v.tags
+assert ['expensive', 'red', 'sporty'] == v.tags
 
 tags = "red/sporty/expensive"
 
 v.parseTags(tags, "/")
-assert ['expensive', 'red','sporty'] == v.tags
+assert ['expensive', 'red', 'sporty'] == v.tags
 ```
 
 Configuration options

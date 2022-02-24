@@ -6,16 +6,16 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
 		classpath "org.grails.plugins:hibernate5:$gormHibernate5Version"
+        classpath "io.github.gradle-nexus:publish-plugin:1.0.0"
     }
 }
 
-version "4.0.0-SNAPSHOT"
-group "org.grails.plugins"
+group "io.github.gpc"
 
-apply plugin:"eclipse"
-apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-gsp"
+apply plugin: "maven-publish"
+apply plugin: "signing"
+apply plugin: "io.github.gradle-nexus.publish-plugin"
 
 repositories {
     mavenLocal()
@@ -46,7 +46,6 @@ dependencies {
     compile "org.grails:grails-plugin-url-mappings"
     compile "org.grails:grails-plugin-interceptors"
     compile "org.grails.plugins:async"
-    compile "org.grails.plugins:gsp"
     profile "org.grails.profiles:web-plugin"
     runtime "com.h2database:h2"
     runtime "org.apache.tomcat:tomcat-jdbc"
@@ -59,4 +58,124 @@ dependencies {
 
 jar {
     exclude "grails/plugins/taggable/Test*"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = 'grails-taggable-plugin'
+            version = project.version
+
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'Taggable Grails Plugin'
+                description = 'The Taggable that adds a generic mechanism for tagging data.'
+                url = 'https://github.com/gpc/taggable'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'graemerocher'
+                        name = 'Graeme Rocher'
+                    }
+                    developer {
+                        id = 'marcpalmer'
+                        name = 'Marc Palmer'
+                    }
+                    developer {
+                        id = 'pledbrook'
+                        name = 'Peter Ledbrook'
+                    }
+                    developer {
+                        id = 'rhyolight'
+                        name = 'Matthew Taylor '
+                    }
+                    developer {
+                        id = 'lhotari'
+                        name = 'Lari Hotari'
+                    }
+                    developer {
+                        id = 'codeconsole'
+                        name = 'Scott Murphy'
+                    }
+                    developer {
+                        id = 'jjelliott'
+                        name = 'JJ'
+                    }
+                    developer {
+                        id = 'cazacugmihai'
+                        name = 'Mihai Cazacu'
+                    }
+                    developer {
+                        id = 'stokito'
+                        name = 'Sergey Ponomarev'
+                    }
+                    developer {
+                        id = 'jeffbrown'
+                        name = 'Jeff Scott Brown'
+                    }
+                    developer {
+                        id = 'sbglasius'
+                        name = 'Søren Berg Glasius'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/gpc/taggable.git'
+                    developerConnection = 'scm:git:ssh://github.com:gpc/taggable.git'
+                    url = 'https://github.com/gpc/taggable'
+                }
+            }
+        }
+    }
+}
+
+ext."signing.keyId" = project.findProperty('signing.keyId') ?: System.getenv('SIGNING_KEY_ID')
+ext."signing.password" = project.findProperty('signing.password') ?: System.getenv('SIGNING_PASSPHRASE')
+ext."signing.secretKeyRingFile" = project.findProperty('signing.secretKeyRingFile') ?: (System.getenv('SIGNING_PASSPHRASE') ?: "${System.getProperty('user.home')}/.gnupg/secring.gpg")
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+afterEvaluate {
+    signing {
+        required { isReleaseVersion }
+        sign publishing.publications.maven
+    }
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            def ossUser = System.getenv("SONATYPE_USERNAME") ?: project.findProperty('sonatypeOss2Username') ?: ''
+            def ossPass = System.getenv("SONATYPE_PASSWORD") ?: project.findProperty("sonatypeOss2Password") ?: ''
+            def ossStagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID") ?: project.findProperty("sonatypeOssStagingProfileIdJms") ?: ''
+
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            username = ossUser
+            password = ossPass
+            stagingProfileId = ossStagingProfileId
+        }
+    }
+}
+
+task snapshotVersion {
+    doLast {
+        if (!project.version.endsWith('-SNAPSHOT')) {
+            ant.propertyfile(file: "gradle.properties") {
+                entry(key: "version", value: "${project.version}-SNAPSHOT")
+            }
+        }
+    }
 }

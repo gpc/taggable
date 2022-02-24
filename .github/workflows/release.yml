@@ -58,13 +58,13 @@ jobs:
                     author_email: $${ secrets.GIT_USER_EMAIL }}
                     message: 'Set version to next SNAPSHOT'
             -   name: Check file existence
-                id: check_files
+                id: check_documentation
                 uses: andstor/file-existence-action@v1
                 with:
                     files: "src/docs/asciidoc"
 
             -   name: Build documentation
-                if: steps.check_files.outputs.files_exists == 'true'
+                if: steps.check_documentation.outputs.files_exists == 'true'
                 env:
                     RELEASE_VERSION: ${{ steps.get_version.outputs.version-without-v }}
                 run: |
@@ -72,7 +72,7 @@ jobs:
             -   name: Export Gradle Properties
                 uses: micronaut-projects/github-actions/export-gradle-properties@master
             -   name: Publish to Github Pages
-                if: steps.check_files.outputs.files_exists == 'true' && success() 
+                if: steps.check_documentation.outputs.files_exists == 'true' && success() 
                 uses: micronaut-projects/github-pages-deploy-action@master
                 env:
                     BETA: ${{ steps.get_version.outputs.isPrerelase }}

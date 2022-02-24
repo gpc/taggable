@@ -57,12 +57,11 @@ jobs:
                     author_name: ${{ secrets.GIT_USER_NAME }}
                     author_email: $${ secrets.GIT_USER_EMAIL }}
                     message: 'Set version to next SNAPSHOT'
-            -   name: Check file existence
+            -   name: Check file documentation exists
                 id: check_documentation
                 uses: andstor/file-existence-action@v1
                 with:
-                    files: "src/docs/asciidoc"
-
+                    files: "src/docs"
             -   name: Build documentation
                 if: steps.check_documentation.outputs.files_exists == 'true'
                 env:

@@ -5,17 +5,16 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
+		classpath "org.grails.plugins:hibernate5:$gormHibernate5Version"
     }
 }
 
-version "2.1.0-SNAPSHOT"
+version "4.0.0-SNAPSHOT"
 group "org.grails.plugins"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 
 repositories {
@@ -38,7 +37,7 @@ dependencies {
 
     provided "org.grails:grails-web-boot"
     provided "org.grails.plugins:hibernate5"
-    compile "org.hibernate:hibernate-core:5.1.5.Final"
+    compile "org.hibernate:hibernate-core:$hibernateVersion"
     compile "org.grails:grails-logging"
     compile "org.grails:grails-plugin-rest"
     compile "org.grails:grails-plugin-databinding"
@@ -52,26 +51,12 @@ dependencies {
     runtime "com.h2database:h2"
     runtime "org.apache.tomcat:tomcat-jdbc"
     testCompile "org.grails:grails-gorm-testing-support"
-    testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"
     testCompile "org.grails:grails-web-testing-support"
-    testCompile "org.grails:grails-test-mixins:3.3.0.RC1"
 
     console "org.grails:grails-console"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleWrapperVersion
-}
-grailsPublish {
-    githubSlug = 'gpc/taggable'
-    license {
-        name = 'Apache-2.0'
-    }
-    title = "Taggable Plugin"
-    desc = "Grails Taggable Plugin"
-    developers = [graemerocher: "Graeme Rocher"]
-}
 jar {
     exclude "grails/plugins/taggable/Test*"
 }

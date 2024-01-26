@@ -20,7 +20,7 @@ class TagsTagLib {
             throwTagError("Required attribute [tags] must be a map of tag names to tag counts")
         }
 
-        def classes = grailsApplication.config.grails.taggable.css.classes ?: defaultCssClasses
+        def classes = grailsApplication.config.getProperty("grails.taggable.css.classes", ArrayList, defaultCssClasses)
 
         // The named arguments for the 'link' GSP tag used to display each tag.
         def idProperty = attrs?.idProperty ?: "id"

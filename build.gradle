@@ -1,59 +1,75 @@
 buildscript {
     repositories {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url "https://repo.gradle.org/gradle/libs-releases" }
     }
+    
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            // Fix: Redirect 'grails-shell' -> 'grails-shell-cli'
+            if (details.requested.group == 'org.grails' && details.requested.name == 'grails-shell') {
+                details.useTarget "org.apache.grails:grails-shell-cli:7.0.4"
+            }
+        }
+    }
+    
     dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "org.grails.plugins:hibernate5:$gormHibernate5Version"
-        classpath "io.github.gradle-nexus:publish-plugin:1.0.0"
+        classpath "org.apache.grails:grails-gradle-plugins:$grailsGradlePluginVersion"
     }
 }
 
 group "io.github.gpc"
 
-apply plugin:"org.grails.grails-plugin"
+apply plugin: "groovy"
+apply plugin: "org.apache.grails.gradle.grails-plugin"
+apply plugin: "org.apache.grails.gradle.grails-gsp"
 apply plugin: "maven-publish"
-apply plugin: "signing"
-apply plugin: "io.github.gradle-nexus.publish-plugin"
 
 repositories {
     mavenLocal()
+    mavenCentral()
     maven { url "https://repo.grails.org/grails/core" }
 }
 
-dependencies {
-    implementation "org.grails:grails-core"
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        // Force Groovy 4.0.29
+        if (details.requested.group == 'org.codehaus.groovy') {
+            details.useTarget "org.apache.groovy:${details.requested.name}:4.0.29"
+            details.because "Grails 7 requires Groovy 4"
+        }
+    }
+}
 
+dependencies {
+    implementation platform("org.apache.grails:grails-bom:$grailsVersion")
+    
+    implementation "org.apache.grails:grails-core"
     implementation "org.springframework.boot:spring-boot-starter-logging"
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-starter-tomcat"
-
-    implementation "org.grails:grails-web-boot"
-    implementation "org.grails.plugins:hibernate5"
-    implementation "org.hibernate:hibernate-core"
-    implementation "org.grails:grails-logging"
-    implementation "org.grails:grails-plugin-rest"
-    implementation "org.grails:grails-plugin-databinding"
-    implementation "org.grails:grails-plugin-i18n"
-    implementation "org.grails:grails-plugin-services"
-    implementation "org.grails:grails-plugin-url-mappings"
-    implementation "org.grails:grails-plugin-interceptors"
-    implementation "org.grails:grails-datastore-gorm-hibernate5:$gormHibernate5Version"
-    implementation "org.grails.plugins:cache"
-    implementation "org.grails.plugins:async"
-    profile "org.grails.profiles:web-plugin"
+    implementation "org.apache.grails:grails-web-boot"
+    implementation "org.apache.grails:grails-logging"
+    
+    implementation "org.apache.grails:grails-data-hibernate5"
+    implementation "org.hibernate:hibernate-core:6.6.4.Final"
+    
+    profile "org.apache.grails.profiles:web-plugin"
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.apache.tomcat:tomcat-jdbc"
-    compileOnly "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "org.grails:grails-gorm-testing-support"
-    testImplementation "org.grails:grails-web-testing-support"
-
-    console "org.grails:grails-console"
+    
+    compileOnly "io.micronaut:micronaut-inject-groovy:4.6.6"
+    testImplementation "io.micronaut:micronaut-inject-groovy:4.6.6"
+    testImplementation "org.apache.grails:grails-gorm-testing-support:7.0.4"
+    testImplementation "org.apache.grails:grails-web-testing-support:7.0.4"
+    console "org.apache.grails:grails-console"
 }
+
+// Disable bootJar for plugin
+tasks.findByName('bootJar')?.enabled = false
+tasks.findByName('bootRun')?.enabled = false
+tasks.findByName('findMainClass')?.enabled = false
 
 jar {
     exclude "grails/plugins/taggable/Test*"
@@ -67,9 +83,6 @@ publishing {
             version = project.version
 
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
-
             pom {
                 name = 'Taggable Grails Plugin'
                 description = 'The Taggable that adds a generic mechanism for tagging data.'
@@ -135,40 +148,6 @@ publishing {
         }
     }
 }
-
-ext."signing.keyId" = project.findProperty('signing.keyId') ?: System.getenv('SIGNING_KEY_ID')
-ext."signing.password" = project.findProperty('signing.password') ?: System.getenv('SIGNING_PASSPHRASE')
-ext."signing.secretKeyRingFile" = project.findProperty('signing.secretKeyRingFile') ?: (System.getenv('SIGNING_PASSPHRASE') ?: "${System.getProperty('user.home')}/.gnupg/secring.gpg")
-
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-
-afterEvaluate {
-    signing {
-        required { isReleaseVersion }
-        sign publishing.publications.maven
-    }
-}
-
-tasks.withType(Sign) {
-    onlyIf { isReleaseVersion }
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            def ossUser = System.getenv("SONATYPE_USERNAME") ?: project.findProperty('sonatypeOss2Username') ?: ''
-            def ossPass = System.getenv("SONATYPE_PASSWORD") ?: project.findProperty("sonatypeOss2Password") ?: ''
-            def ossStagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID") ?: project.findProperty("sonatypeOssStagingProfileIdJms") ?: ''
-
-            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
-            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            username = ossUser
-            password = ossPass
-            stagingProfileId = ossStagingProfileId
-        }
-    }
-}
-
 task snapshotVersion {
     doLast {
         if (!project.version.endsWith('-SNAPSHOT')) {

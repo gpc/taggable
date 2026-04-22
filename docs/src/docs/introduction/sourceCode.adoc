@@ -5,4 +5,4 @@ The full source code for this plugin can be found on https://github.com/gpc/tagg
 
 For issues, improvements, or new features, go to https://github.com/gpc/taggable/issues[GitHub issues].
 
-Feel free to send me any correction about this document.
+Feel free to PUSH any correction about this document.

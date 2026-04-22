@@ -1,12 +1,8 @@
 [[sourceCode]]
 === Source code
 
-The full source code for this plugin can be found on https://github.com/gpc/grails-export[GitHub].
+The full source code for this plugin can be found on https://github.com/gpc/taggable[GitHub].
 
-The master branch is for the Grails 3.x version. The code for the Grails 2.x version is on branch: `grails-2.x`.
-
-For issues, improvements or new features go to the plugin's go to https://github.com/gpc/grails-export/issues[GitHub issues].
-
-To contact me directly my email address is puneet DOT behl007 AT gmail DOT com
+For issues, improvements, or new features, go to https://github.com/gpc/taggable/issues[GitHub issues].
 
 Feel free to send me any correction about this document.

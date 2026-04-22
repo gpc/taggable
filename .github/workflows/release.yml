@@ -59,7 +59,7 @@ jobs:
       - name: "Export gradle.properties properties"
         uses: apache/grails-github-actions/export-gradle-properties@asf
       - name: "🐘 Setup Gradle"
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           build-scan-publish: ${{ env.ciBuildScanPublish }}
           build-scan-terms-of-use-url: ${{ env.ciBuildScanTermsOfUseUrl }}
@@ -84,7 +84,7 @@ jobs:
       - name: "Generate Build Date file"
         run: echo "$SOURCE_DATE_EPOCH" >> build/BUILD_DATE.txt
       - name: "Upload Build Date file"
-        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         with:
           files: build/BUILD_DATE.txt
         env:
@@ -119,7 +119,7 @@ jobs:
       - name: "Export gradle.properties properties"
         uses: apache/grails-github-actions/export-gradle-properties@asf
       - name: "🐘 Setup Gradle"
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           build-scan-publish: ${{ env.ciBuildScanPublish }}
           build-scan-terms-of-use-url: ${{ env.ciBuildScanTermsOfUseUrl }}
@@ -164,7 +164,7 @@ jobs:
       - name: "Export gradle.properties properties"
         uses: apache/grails-github-actions/export-gradle-properties@asf
       - name: "🐘 Setup Gradle"
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           build-scan-publish: ${{ env.ciBuildScanPublish }}
           build-scan-terms-of-use-url: ${{ env.ciBuildScanTermsOfUseUrl }}

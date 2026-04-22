@@ -1,0 +1,52 @@
+[[gettingStarted]]
+== Getting Started
+
+=== Requirements
+
+* Grails {grailsVersion}
+* Java 17+
+
+=== Installation
+
+Add the plugin to your application's `build.gradle`:
+
+[source,groovy,subs="attributes"]
+----
+dependencies {
+    implementation 'io.github.gpc:taggable:{version}'
+}
+----
+
+=== Case sensitivity
+
+By default, all tags are forced to lower case. Set the following in `application.yml` to preserve the supplied case:
+
+[source,yaml]
+----
+grails:
+    taggable:
+        preserve:
+            case: true
+----
+
+Finder methods continue to treat each tag as a discrete string, so `"grails"` and `"Grails"` are independent tags when
+case preservation is on.
+
+=== Custom table names
+
+[source,groovy]
+----
+grails.taggable.tag.table     = 'MY_TAGS'
+grails.taggable.tagLink.table = 'MY_TAG_LINKS'
+----
+
+=== Hibernate autoImport
+
+Auto-import is disabled by default for `Tag` / `TagLink` to avoid conflicts with consumer-domain classes of the same
+name. Re-enable if required:
+
+[source,groovy]
+----
+grails.taggable.tag.autoImport     = true
+grails.taggable.tagLink.autoImport = true
+----

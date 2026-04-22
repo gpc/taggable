@@ -1,0 +1,12 @@
+[[introduction]]
+== Introduction
+
+The Taggable plugin adds a generic mechanism for tagging any Grails domain class. It supports method chaining,
+polymorphic tag queries across class hierarchies, configurable case sensitivity, and a GSP tag library for rendering
+tag clouds.
+
+include::introduction/sourceCode.adoc[]
+
+include::introduction/currentVersion.adoc[]
+
+include::introduction/license.adoc[]

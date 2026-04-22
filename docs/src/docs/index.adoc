@@ -1,0 +1,8 @@
+= Taggable Plugin - Reference Documentation
+Grails Plugin Collective
+
+include::introduction.adoc[]
+
+include::gettingStarted.adoc[]
+
+include::usage.adoc[]

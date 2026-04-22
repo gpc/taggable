@@ -1,0 +1,51 @@
+plugins {
+    id 'config.compile'
+    id 'config.grails-plugin'
+    id 'config.publish'
+    id 'config.testing'
+}
+
+version = projectVersion
+group = 'io.github.gpc'
+
+dependencies {
+    profile 'org.apache.grails.profiles:web-plugin'
+    console 'org.apache.grails:grails-console'
+
+    compileOnly platform("org.apache.grails:grails-bom:$grailsVersion")
+    compileOnly 'org.apache.grails:grails-dependencies-starter-web'
+    compileOnly 'org.apache.grails.data:grails-datastore-core'
+
+    testImplementation platform("org.apache.grails:grails-bom:$grailsVersion")
+    testImplementation 'org.apache.grails:grails-dependencies-starter-web'
+    testImplementation 'org.apache.grails:grails-dependencies-test'
+    testImplementation 'org.apache.grails:grails-testing-support-web'
+}
+
+extensions.configure(org.apache.grails.gradle.publish.GrailsPublishExtension) {
+    def githubUser    = rootProject.findProperty('githubUser')
+    def githubProject = rootProject.findProperty('githubProject')
+    it.artifactId = project.name
+    it.githubSlug = "${githubUser}/${githubProject}"
+    it.license.name = 'Apache-2.0'
+    it.title = 'Grails Taggable Plugin'
+    it.desc = 'Adds a generic mechanism for tagging any Grails domain class, with tag-cloud taglib support.'
+    it.organization {
+        it.name = 'Grails Plugin Collective (GPC)'
+        it.url = "https://github.com/${githubUser}"
+    }
+    it.developers = [
+            graemerocher  : 'Graeme Rocher',
+            pledbrook     : 'Peter Ledbrook',
+            marcpalmer    : 'Marc Palmer',
+            jjelliott     : 'jjelliott',
+            codeconsole   : 'Scott Murphy',
+            sbglasius     : 'Søren Berg Glasius',
+            lhotari       : 'Lari Hotari',
+            rhyolight     : 'Matthew Taylor',
+            eusorov       : 'Evgeny Usorov',
+            cazacugmihai  : 'Mihai Cazacu',
+            jeffscottbrown: 'Jeff Scott Brown',
+            stokito       : 'Sergey Ponomarev',
+    ]
+}

@@ -1,0 +1,93 @@
+[[usage]]
+== Usage
+
+=== Making a domain class taggable
+
+[source,groovy]
+----
+import grails.plugins.taggable.*
+
+class Vehicle implements Taggable { }
+----
+
+=== Adding, removing, and replacing tags
+
+[source,groovy]
+----
+def v = Vehicle.get(1)
+
+v.addTag('red')
+ .addTag('sporty')
+ .addTag('expensive')
+
+v.addTags(['electric', 'hybrid'])
+
+v.setTags(['red', 'sporty', 'expensive'])
+
+v.removeTag('expensive')
+
+def tags = v.tags          // ['red', 'sporty']
+----
+
+=== Querying by tag
+
+[source,groovy]
+----
+def vehicles   = Vehicle.findAllByTag('sporty')       // also accepts [max: 5] etc.
+def count      = Vehicle.countByTag('sporty')
+def totalTags  = Vehicle.totalTags
+def allTags    = Vehicle.allTags
+
+def teslaElectricCars = Vehicle.findAllByTagWithCriteria('electric') {
+    eq('manufacturer', 'Tesla Motors')
+}
+
+def fiveCoolTags = Vehicle.findAllTagsWithCriteria([max: 5]) {
+    ilike('name', '%cool%')
+}
+----
+
+=== Querying by tag with HQL
+
+`Tag` and `TagLink` are mapped GORM entities; you can use them in HQL:
+
+[source,groovy]
+----
+def gasGuzzlers = Vehicle.executeQuery('''
+   SELECT vehicle
+   FROM   Vehicle vehicle, TagLink tagLink
+   WHERE  vehicle.id = tagLink.tagRef
+   AND    tagLink.type = 'Vehicle'
+   AND    tagLink.tag.name IN (:tags)
+''', [tags: ['SUV', 'gas-guzzler', 'tank', 'boat']])
+----
+
+=== Parsing delimited tag strings
+
+[source,groovy]
+----
+v.parseTags('red,sporty,expensive')
+v.parseTags('red/sporty/expensive', '/')
+----
+
+=== Tag cloud taglib
+
+[source,html]
+----
+<tags:tagCloud action="browseByTag" tags="${Vehicle.allTags.collectEntries { [(it): Vehicle.countByTag(it)] }}"/>
+----
+
+Override the default CSS size classes via configuration:
+
+[source,yaml]
+----
+grails:
+    taggable:
+        css:
+            classes:
+                - tiny
+                - small
+                - medium
+                - large
+                - huge
+----

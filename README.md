@@ -15,18 +15,17 @@ Classes can be made taggable by implementing the [grails.plugins.taggable.Taggab
 
 Requirements
 ------------
-Grails Version: 4.0.0
+Grails 7.0.x, Groovy 4.0.x, Java 17+
 
 Installation
 ------------
 
-Add this dependency to `build.gradle`
+Add this dependency to `build.gradle`:
 
 ```groovy
-    dependencies {
-    compile "io.github.gpc:taggable:4.0.0"
+dependencies {
+    implementation 'io.github.gpc:taggable:7.0.0'
 }
-
 ```
 
 By default, the plugin will force all tags to lower case. If you want to preserve the case of tags, you must specify the

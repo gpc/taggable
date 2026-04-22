@@ -1,0 +1,14 @@
+[[currentVersion]]
+=== Current version
+
+Current version is *{revnumber}*.
+
+|===
+| Plugin release   | Supported Grails Version
+| 7.x              | >= 7.0
+| 6.x              | 6.x
+| 5.x              | 5.x
+| 4.x              | 4.x
+|===
+
+This version is developed against *Grails {grailsVersion}*.

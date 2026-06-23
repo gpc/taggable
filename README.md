@@ -1,13 +1,16 @@
 Taggable Grails Plugin
 ======================
 
-The [Taggable plugin](https://plugins.grails.org/plugin/grails/taggable) that adds a generic mechanism for tagging data.
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.gpc/taggable)](https://central.sonatype.com/artifact/io.github.gpc/taggable)
+[![CI](https://github.com/gpc/taggable/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/gpc/taggable/actions/workflows/ci.yml)
+
+The Taggable plugin that adds a generic mechanism for tagging data.
 
 Taggable Plugin
 ---------------
 This plugin provides an alternative to the Acts as Taggable hosted at grails.org and with the following features.
 
-Classes can be made taggable by implementing the [grails.plugins.taggable.Taggable](/src/main/groovy/grails/plugins/taggable/Taggable.groovy) interface
+Classes can be made taggable by implementing the [grails.plugins.taggable.Taggable](https://github.com/gpc/taggable/blob/7.0.x/plugin/src/main/groovy/grails/plugins/taggable/Taggable.groovy) interface
 * Method chaining can be used to add tags
 * The table name the domain classes use is customizable
 * Utilizes extensive caching to improve performance
